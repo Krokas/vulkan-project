@@ -20,6 +20,15 @@ int main() {
   while (!window->shouldClose()) {
     window->pollEvents();
     // main loop
+    if (auto commandBuffer = renderer->beginFrame()) {
+      int frameIndex = renderer->getCurrentFrameIndex();
+      // RENDER LOOP
+      // render calls should go in between render pass calls
+      renderer->beginSwapChainRenderPass(commandBuffer);
+
+      renderer->endSwapChainRenderPass(commandBuffer);
+      renderer->endFrame();
+    }
   }
   // Before killing everything wait until GPU finishes it's tasks.
   device->waitIdle();

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <glm/vec4.hpp>
 #include <memory>
 #include <vector>
 
@@ -32,7 +33,8 @@ class Renderer {
 
   VkCommandBuffer beginFrame();
   void endFrame();
-  void beginSwapChainRenderPass(VkCommandBuffer commandBuffer);
+  void beginSwapChainRenderPass(
+      VkCommandBuffer commandBuffer, glm::vec4 clearColor = {0.01f, 0.01f, 0.01f, 1.0f});
   void endSwapChainRenderPass(VkCommandBuffer commandBuffer);
 
  private:
@@ -46,6 +48,6 @@ class Renderer {
   std::vector<VkCommandBuffer> commandBuffers;
 
   uint32_t currentImageIndex;
-  int currentFrameIndex;
-  bool isFrameStarted;
+  int currentFrameIndex = 0;
+  bool isFrameStarted = false;
 };

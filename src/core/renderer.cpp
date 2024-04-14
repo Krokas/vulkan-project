@@ -102,7 +102,7 @@ void Renderer::endFrame() {
   isFrameStarted = false;
   currentFrameIndex = (currentFrameIndex + 1) % SwapChain::MAX_FRAMES_IN_FLIGHT;
 }
-void Renderer::beginSwapChainRenderPass(VkCommandBuffer commandBuffer) {
+void Renderer::beginSwapChainRenderPass(VkCommandBuffer commandBuffer, glm::vec4 clearColor) {
   R_ASSERT(isFrameStarted, "Cant call beginSwapChainRenderPass when frame is not in progress");
   R_ASSERT(
       commandBuffer == getCurrentCommandBuffer(),
@@ -118,7 +118,7 @@ void Renderer::beginSwapChainRenderPass(VkCommandBuffer commandBuffer) {
 
   std::array<VkClearValue, 2> clearValues{};
 
-  clearValues[0].color = {0.01f, 0.01f, 0.01f, 1.0f};
+  clearValues[0].color = {clearColor.r, clearColor.g, clearColor.b, clearColor.a};
   clearValues[1].depthStencil = {1.0f, 0};
   renderPassInfo.clearValueCount = static_cast<uint32_t>(clearValues.size());
   renderPassInfo.pClearValues = clearValues.data();
