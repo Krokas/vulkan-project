@@ -5,32 +5,21 @@
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
 #include <glm/glm.hpp>
 #include <glm/mat4x4.hpp>
+#include <memory>
 
 #include "log.h"
+#include "window.h"
 
-int main()
-{
-  glfwInit();
-  glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-  GLFWwindow *window = glfwCreateWindow(800, 600, "Vulkan Project", nullptr, nullptr);
+int main() {
+  static constexpr int WIDTH = 800;
+  static constexpr int HEIGHT = 600;
 
-  uint32_t extensions = 0;
-  vkEnumerateInstanceExtensionProperties(nullptr, &extensions, nullptr);
+  static std::shared_ptr<Window> window;
 
-  R_TRACE("Extension count: %i", extensions);
+  window = std::make_shared<Window>(WIDTH, HEIGHT, "Vulkan project");
 
-  glm::mat4 testMatrix(1.0f);
-  glm::vec4 testVector(1.0f);
-
-  auto testResult = testMatrix * testVector;
-
-  while (!glfwWindowShouldClose(window))
-  {
-    glfwPollEvents();
+  while (!window->shouldClose()) {
+    window->pollEvents();
+    // main loop
   }
-
-  glfwDestroyWindow(window);
-  glfwTerminate();
-
-  return 0;
 }

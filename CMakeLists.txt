@@ -4,7 +4,9 @@ project(${Project_name})
 
 set(CMAKE_CXX_STANDARD 17)
 
-set(SOURCES)
+set(SOURCES
+        src/core/window.h
+        src/core/window.cpp)
 
 set(Vulkan_Project_SRC
         src/main.cpp
@@ -22,8 +24,8 @@ add_compile_options(-Wno-writable-strings)
 add_executable(${Project_name} ${Vulkan_Project_SRC})
 
 target_include_directories(${Project_name}
-        PRIVATE core
-        PRIVATE application
+        PRIVATE src
+        PRIVATE src/core
         )
 
 add_subdirectory(vendor/glfw EXCLUDE_FROM_ALL)
