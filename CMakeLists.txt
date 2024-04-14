@@ -7,7 +7,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(SOURCES)
 
 set(Vulkan_Project_SRC
-        main.cpp
+        src/main.cpp
         ${SOURCES}
         )
 
@@ -18,6 +18,7 @@ set(Vulkan_Project_SRC
 #        COMMENT "Compiling shaders"
 #)
 
+add_compile_options(-Wno-writable-strings)
 add_executable(${Project_name} ${Vulkan_Project_SRC})
 
 target_include_directories(${Project_name}
