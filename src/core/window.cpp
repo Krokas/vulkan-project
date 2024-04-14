@@ -1,7 +1,5 @@
 #include "window.h"
 
-#include <stdexcept>
-
 #include "log.h"
 
 Window::Window(int width, int height, std::string name)
@@ -16,7 +14,8 @@ Window::~Window() {
 
 void Window::createWindowSurface(VkInstance instance, VkSurfaceKHR* surface) {
   if (glfwCreateWindowSurface(instance, window, nullptr, surface) != VK_SUCCESS) {
-    throw std::runtime_error("failed to create window surface");
+    R_ASSERT(false, "Failed tor create window surface");
+    return;
   }
 }
 

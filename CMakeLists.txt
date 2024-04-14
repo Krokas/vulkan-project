@@ -6,7 +6,9 @@ set(CMAKE_CXX_STANDARD 17)
 
 set(SOURCES
         src/core/window.h
-        src/core/window.cpp)
+        src/core/window.cpp
+        src/core/device.h
+        src/core/device.cpp)
 
 set(Vulkan_Project_SRC
         src/main.cpp
@@ -20,7 +22,7 @@ set(Vulkan_Project_SRC
 #        COMMENT "Compiling shaders"
 #)
 
-add_compile_options(-Wno-writable-strings)
+add_compile_options(-Wno-writable-strings -Wno-format-security)
 add_executable(${Project_name} ${Vulkan_Project_SRC})
 
 target_include_directories(${Project_name}
