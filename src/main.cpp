@@ -1,14 +1,8 @@
-#define GLFW_INCLUDE_VULKAN
-#include <GLFW/glfw3.h>
-
-#define GLM_FORCE_RADIANS
-#define GLM_FORCE_DEPTH_ZERO_TO_ONE
-#include <glm/glm.hpp>
-#include <glm/mat4x4.hpp>
 #include <memory>
 
 #include "device.h"
 #include "log.h"
+#include "renderer.h"
 #include "window.h"
 
 int main() {
@@ -17,14 +11,18 @@ int main() {
 
   static std::shared_ptr<Window> window;
   static std::shared_ptr<Device> device;
+  static std::shared_ptr<Renderer> renderer;
 
   window = std::make_shared<Window>(WIDTH, HEIGHT, "Vulkan project");
   device = std::make_shared<Device>(*window);
+  renderer = std::make_shared<Renderer>(*window, *device);
 
   while (!window->shouldClose()) {
     window->pollEvents();
     // main loop
   }
+  // Before killing everything wait until GPU finishes it's tasks.
+  device->waitIdle();
 
   return EXIT_SUCCESS;
 }

@@ -8,7 +8,11 @@ set(SOURCES
         src/core/window.h
         src/core/window.cpp
         src/core/device.h
-        src/core/device.cpp)
+        src/core/device.cpp
+        src/core/swapChain.h
+        src/core/swapChain.cpp
+        src/core/renderer.h
+        src/core/renderer.cpp)
 
 set(Vulkan_Project_SRC
         src/main.cpp
