@@ -46,6 +46,7 @@ class Model {
 
   void bind(VkCommandBuffer commandBuffer);
   void draw(VkCommandBuffer commandBuffer);
+  void drawInstanced(VkCommandBuffer commandBuffer);
 
  private:
   void createVertexBuffers(const std::vector<Vertex>& vertices);

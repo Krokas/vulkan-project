@@ -3,10 +3,12 @@
 #include <filesystem>
 #include <fstream>
 
+#include "log.h"
+
 std::vector<char> File::readFile(const std::string& filePath) {
   std::ifstream file{filePath, std::ios::ate | std::ios::binary};
   if (!file.is_open()) {
-    throw std::runtime_error("Failed to open file: " + filePath);
+    R_ASSERT(false, "Failed to open file: %s", filePath.c_str());
   }
 
   size_t fileSize = static_cast<size_t>(file.tellg());
@@ -23,7 +25,7 @@ std::vector<char> File::readFile(const std::string& filePath) {
 
 std::vector<char> File::readShaderFile(const std::string& fileName) {
   std::string filePath = "";
-  filePath.append("resources\\shaders\\");
+  filePath.append("../resources/shaders/");
   filePath.append(fileName);
 
   return readFile(std::filesystem::absolute(filePath).string());
@@ -31,7 +33,7 @@ std::vector<char> File::readShaderFile(const std::string& fileName) {
 
 std::string File::getModelFilePath(const std::string& fileName) {
   std::string filePath = "";
-  filePath.append("resources\\models\\");
+  filePath.append("../resources/models/");
   filePath.append(fileName);
 
   return std::filesystem::absolute(filePath).string();
@@ -39,7 +41,7 @@ std::string File::getModelFilePath(const std::string& fileName) {
 
 std::string File::getFontFilePath(const std::string& fileName) {
   std::string filePath = "";
-  filePath.append("resources\\fonts\\");
+  filePath.append("../resources/fonts/");
   filePath.append(fileName);
 
   return std::filesystem::absolute(filePath).string();

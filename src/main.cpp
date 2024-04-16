@@ -6,11 +6,13 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/constants.hpp>
 
+#include "UISystem.h"
 #include "descriptor.h"
 #include "device.h"
 #include "log.h"
 #include "renderInfo.h"
 #include "renderer.h"
+#include "textComponent.h"
 #include "window.h"
 
 void initGlobalPool(Device& device, DescriptorInfo* descriptorInfo) {
@@ -37,7 +39,7 @@ void initGlobalDescriptors(Device& device, DescriptorInfo* descriptorInfo) {
     descriptorInfo->uboBuffers[i]->map();
   }
 
-  auto globalSetLayout =
+  descriptorInfo->globalSetLayout =
       DescriptorSetLayout::Builder(device)
           .addBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_ALL_GRAPHICS)
           .build();
@@ -45,7 +47,7 @@ void initGlobalDescriptors(Device& device, DescriptorInfo* descriptorInfo) {
   std::vector<VkDescriptorSet> globalDescriptorSets(SwapChain::MAX_FRAMES_IN_FLIGHT);
   for (int i = 0; i < globalDescriptorSets.size(); i++) {
     auto bufferInfo = descriptorInfo->uboBuffers[i]->descriptorInfo();
-    DescriptorWriter(*globalSetLayout, *descriptorInfo->globalPool)
+    DescriptorWriter(*descriptorInfo->globalSetLayout, *descriptorInfo->globalPool)
         .writeBuffer(0, &bufferInfo)
         .build(globalDescriptorSets[i]);
   }
@@ -72,6 +74,7 @@ int main() {
   static std::shared_ptr<Renderer> renderer;
   static DescriptorInfo descriptorInfo{};
   descriptorInfo.uboBuffers.resize(SwapChain::MAX_FRAMES_IN_FLIGHT);
+
   Camera camera{};
   GameObject::Map gameObjects;
 
@@ -81,7 +84,24 @@ int main() {
   initGlobalPool(*device, &descriptorInfo);
   initGlobalDescriptors(*device, &descriptorInfo);
 
+  UISystem uiSystem{
+      *device,
+      *window,
+      renderer->getSwapChainRenderPass(),
+      descriptorInfo.globalSetLayout->getDescriptorSetLayout()};
+
   auto currentTime = std::chrono::high_resolution_clock::now();
+
+  GameObject text = GameObject::createGameObject();
+  text.text = std::make_unique<TextComponent>();
+  unsigned int textId = text.getId();
+
+  std::vector<Model::Vertex> vertices{};
+
+  vertices.resize(3);
+  std::shared_ptr<Model> model = Model::createTextFromData(*device, vertices);
+  text.model = model;
+  gameObjects.emplace(textId, std::move(text));
 
   while (!window->shouldClose()) {
     window->pollEvents();
@@ -111,6 +131,8 @@ int main() {
       // RENDER LOOP
       // render calls should go in between render pass calls
       renderer->beginSwapChainRenderPass(commandBuffer);
+
+      uiSystem.render(frameInfo);
 
       renderer->endSwapChainRenderPass(commandBuffer);
       renderer->endFrame();

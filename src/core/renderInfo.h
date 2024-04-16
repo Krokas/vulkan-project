@@ -7,6 +7,7 @@
 #include <unordered_map>
 
 #include "camera.h"
+#include "descriptor.h"
 #include "device.h"
 #include "gameObject.h"
 #include "swapChain.h"
@@ -44,4 +45,5 @@ struct DescriptorInfo {
   std::unique_ptr<DescriptorPool> globalPool{};
   std::vector<std::unique_ptr<Buffer>> uboBuffers{};
   std::vector<VkDescriptorSet> globalDescriptorSets{};
+  std::unique_ptr<DescriptorSetLayout> globalSetLayout;
 };

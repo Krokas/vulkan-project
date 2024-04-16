@@ -136,6 +136,12 @@ void Model::draw(VkCommandBuffer commandBuffer) {
   }
 }
 
+void Model::drawInstanced(VkCommandBuffer commandBuffer) {
+  if (indexCount < 3) {
+    vkCmdDraw(commandBuffer, vertexCount, 1, 0, 0);
+  }
+}
+
 void Model::bind(VkCommandBuffer commandBuffer) {
   VkBuffer buffers[] = {vertexBuffer->getBuffer()};
   VkDeviceSize offsets[] = {0};
@@ -157,10 +163,11 @@ std::vector<VkVertexInputBindingDescription> Model::Vertex::getBindingDescriptio
 std::vector<VkVertexInputAttributeDescription> Model::Vertex::getAttributeDescriptions() {
   std::vector<VkVertexInputAttributeDescription> attributeDescriptions{};
 
-  attributeDescriptions.push_back({0, 0, VK_FORMAT_R32G32B32_SFLOAT, offsetof(Vertex, position)});
-  attributeDescriptions.push_back({1, 0, VK_FORMAT_R32G32B32_SFLOAT, offsetof(Vertex, color)});
-  attributeDescriptions.push_back({2, 0, VK_FORMAT_R32G32B32_SFLOAT, offsetof(Vertex, normal)});
-  attributeDescriptions.push_back({3, 0, VK_FORMAT_R32G32_SFLOAT, offsetof(Vertex, uv)});
+  //   attributeDescriptions.push_back({0, 0, VK_FORMAT_R32G32B32_SFLOAT, offsetof(Vertex,
+  //   position)}); attributeDescriptions.push_back({1, 0, VK_FORMAT_R32G32B32_SFLOAT,
+  //   offsetof(Vertex, color)}); attributeDescriptions.push_back({2, 0, VK_FORMAT_R32G32B32_SFLOAT,
+  //   offsetof(Vertex, normal)}); attributeDescriptions.push_back({3, 0, VK_FORMAT_R32G32_SFLOAT,
+  //   offsetof(Vertex, uv)});
 
   return attributeDescriptions;
 }
