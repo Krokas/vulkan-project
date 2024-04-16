@@ -5,3 +5,12 @@
 [submodule "vendor/glm"]
 	path = vendor/glm
 	url = https://github.com/g-truc/glm.git
+[submodule "vendor/tinyobjloader"]
+	path = vendor/tinyobjloader
+	url = git@github.com:tinyobjloader/tinyobjloader.git
+[submodule "vendor/freetype"]
+	path = vendor/freetype
+	url = https://gitlab.freedesktop.org/freetype/freetype.git
+[submodule "vendor/stb"]
+	path = vendor/stb
+	url = git@github.com:nothings/stb.git
