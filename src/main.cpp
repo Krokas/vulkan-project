@@ -104,7 +104,7 @@ int main() {
   text.text = std::make_unique<TextComponent>();
   unsigned int textId = text.getId();
   std::vector<Model::Vertex> vertices{};
-  vertices.resize(3);
+  vertices.resize(6);
   std::shared_ptr<Model> model = Model::createTextFromData(*device, vertices);
   text.model = model;
   gameObjects.emplace(textId, std::move(text));

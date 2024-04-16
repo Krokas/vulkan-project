@@ -137,7 +137,7 @@ void Model::draw(VkCommandBuffer commandBuffer) {
 }
 
 void Model::drawInstanced(VkCommandBuffer commandBuffer) {
-  if (indexCount < 3) {
+  if (vertexCount >= 3) {
     vkCmdDraw(commandBuffer, vertexCount, 1, 0, 0);
   }
 }
