@@ -93,6 +93,13 @@ int main() {
   auto currentTime = std::chrono::high_resolution_clock::now();
 
   // TODO: This is way too much lines to render a single triangle/square.
+
+  // THE WAY TO DO IT:
+  // 1. Set a <Font> pointer on a text component.
+  // 2. Set a text <std::string> to text component. And position <glm::vec2>. TODO: extra options
+  // later like outline and text color.
+  // 3. update() data for rendering the text using instanced rendering.
+
   GameObject text = GameObject::createGameObject();
   text.text = std::make_unique<TextComponent>();
   unsigned int textId = text.getId();
@@ -101,6 +108,8 @@ int main() {
   std::shared_ptr<Model> model = Model::createTextFromData(*device, vertices);
   text.model = model;
   gameObjects.emplace(textId, std::move(text));
+
+  // Text setup end
 
   while (!window->shouldClose()) {
     window->pollEvents();
