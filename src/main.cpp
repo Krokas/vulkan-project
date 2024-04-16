@@ -92,12 +92,11 @@ int main() {
 
   auto currentTime = std::chrono::high_resolution_clock::now();
 
+  // TODO: This is way too much lines to render a single triangle/square.
   GameObject text = GameObject::createGameObject();
   text.text = std::make_unique<TextComponent>();
   unsigned int textId = text.getId();
-
   std::vector<Model::Vertex> vertices{};
-
   vertices.resize(3);
   std::shared_ptr<Model> model = Model::createTextFromData(*device, vertices);
   text.model = model;
