@@ -8,7 +8,7 @@
 #include "file.h"
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include <ft2build.h>
-#include <stb_image_write.h>
+// #include <stb_image_write.h>
 
 #include <fstream>
 #include FT_FREETYPE_H
@@ -74,10 +74,10 @@ Font::Font(Device* device, const std::string& fontName, const unsigned int fontS
   FT_Done_Face(fontFace);
   FT_Done_FreeType(fontLibrary);
 
-  texture.createFromData((unsigned char*)textureBuffer, textureWidth, textureWidth, 4);
-  // texture.addTexturePath("texture.jpg");
+  // texture.createFromData((unsigned char*)textureBuffer, textureWidth, textureWidth, 4, false);
+  texture.addTexturePath("texture.jpg");
 
-  stbi_write_jpg("out.jpg", textureWidth, textureWidth, 4, textureBuffer, textureWidth * 3);
+  // stbi_write_png("out.jpg", textureWidth, textureWidth, 4, textureBuffer, textureWidth * 3);
 }
 
 void Font::getGlyphCodepoint() {

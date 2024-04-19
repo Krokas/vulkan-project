@@ -12,7 +12,7 @@
 
 struct TextUbo {
   glm::vec3 color{1.0f};
-  alignas(16) glm::vec2 position{0.0f};
+  // alignas(16) glm::vec2 position{0.0f};
 };
 
 class UISystem {
@@ -26,7 +26,8 @@ class UISystem {
       Device& device,
       Window& window,
       VkRenderPass renderPass,
-      VkDescriptorSetLayout globalSetLayout);
+      VkDescriptorSetLayout globalSetLayout,
+      DescriptorInfo* descriptorInfo);
   ~UISystem();
 
   UISystem(const UISystem&) = delete;
@@ -46,6 +47,7 @@ class UISystem {
   Device& device;
   Window& window;
   TextUbo ubo{};
+  DescriptorInfo* descriptorInfo = nullptr;
 
   std::unique_ptr<Pipeline> pipeline;
   VkPipelineLayout pipelineLayout;

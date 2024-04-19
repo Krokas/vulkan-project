@@ -12,7 +12,8 @@ class Texture {
   VkImageView getImageView() { return textureImageView; }
   VkSampler getSampler() { return textureSampler; }
 
-  void createFromData(unsigned char* bitmap, int width, int height, int channels);
+  void createFromData(
+      unsigned char* bitmap, int width, int height, int channels, bool useMipmap = true);
 
  private:
   void createTextureImage();
@@ -30,6 +31,7 @@ class Texture {
       VkImage image, VkFormat imageFormat, int32_t texWidth, int32_t texHeight, uint32_t mipLevels);
 
   bool isDataUsed = false;
+  bool shouldUseMipmap = true;
   int texWidth, texHeight, texChannels;
   unsigned char* pixels;
 

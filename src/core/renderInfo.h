@@ -46,4 +46,9 @@ struct DescriptorInfo {
   std::vector<std::unique_ptr<Buffer>> uboBuffers{};
   std::vector<VkDescriptorSet> globalDescriptorSets{};
   std::unique_ptr<DescriptorSetLayout> globalSetLayout;
+
+  // text
+  std::unique_ptr<DescriptorSetLayout> textSetLayout;
+  std::vector<std::unique_ptr<Buffer>> textBuffers{};
+  std::vector<VkDescriptorSet> textDescriptorSets{};
 };

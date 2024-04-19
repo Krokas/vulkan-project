@@ -19,7 +19,7 @@ Texture::~Texture() {
 
 void Texture::addTexturePath(const std::string& fileName) {
   std::string filePath = "";
-  filePath.append("resources\\textures\\");
+  filePath.append("..\\resources\\textures\\");
   filePath.append(fileName);
 
   texturePath = std::filesystem::absolute(filePath).string();
@@ -31,12 +31,14 @@ void Texture::prepare() {
   createTextureSampler();
 }
 
-void Texture::createFromData(unsigned char* bitmap, int width, int height, int channels) {
+void Texture::createFromData(
+    unsigned char* bitmap, int width, int height, int channels, bool useMipmap) {
   pixels = bitmap;
   texWidth = width;
   texHeight = height;
   texChannels = channels;
   isDataUsed = true;
+  shouldUseMipmap = useMipmap;
 }
 
 void Texture::createTextureImage() {
@@ -44,7 +46,11 @@ void Texture::createTextureImage() {
     pixels = stbi_load(texturePath.c_str(), &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
   }
   VkDeviceSize imageSize = texWidth * texHeight * 4;
-  mipLevels = static_cast<uint32_t>(std::floor(std::log2(std::max(texWidth, texHeight)))) + 1;
+  if (shouldUseMipmap) {
+    mipLevels = static_cast<uint32_t>(std::floor(std::log2(std::max(texWidth, texHeight)))) + 1;
+  } else {
+    mipLevels = 1;
+  }
 
   if (!pixels) {
     throw std::runtime_error("failed to load texture image!");

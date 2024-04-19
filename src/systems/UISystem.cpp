@@ -12,8 +12,12 @@
 #include "font.h"
 
 UISystem::UISystem(
-    Device& device, Window& window, VkRenderPass renderPass, VkDescriptorSetLayout globalSetLayout)
-    : device{device}, window{window} {
+    Device& device,
+    Window& window,
+    VkRenderPass renderPass,
+    VkDescriptorSetLayout globalSetLayout,
+    DescriptorInfo* descriptorInfo)
+    : device{device}, window{window}, descriptorInfo{descriptorInfo} {
   createPipelineLayout(globalSetLayout);
   createPipeline(renderPass);
 }
@@ -77,17 +81,18 @@ void UISystem::update(FrameInfo& frameInfo) {
 void UISystem::render(FrameInfo& frameInfo) {
   pipeline->bind(frameInfo.commandBuffer);
 
-  //   std::vector<VkDescriptorSet> descriptorSets{textDescriptorSet};
+  std::vector<VkDescriptorSet> descriptorSets{
+      descriptorInfo->textDescriptorSets[frameInfo.frameIndex]};
 
-  //   vkCmdBindDescriptorSets(
-  //       frameInfo.commandBuffer,
-  //       VK_PIPELINE_BIND_POINT_GRAPHICS,
-  //       pipelineLayout,
-  //       0,
-  //       static_cast<uint32_t>(descriptorSets.size()),
-  //       descriptorSets.data(),
-  //       0,
-  //       nullptr);
+  vkCmdBindDescriptorSets(
+      frameInfo.commandBuffer,
+      VK_PIPELINE_BIND_POINT_GRAPHICS,
+      pipelineLayout,
+      0,
+      static_cast<uint32_t>(descriptorSets.size()),
+      descriptorSets.data(),
+      0,
+      nullptr);
 
   for (auto& kv : frameInfo.gameObjects) {
     auto& obj = kv.second;
