@@ -1,11 +1,12 @@
 #pragma once
 #include <string>
 
+#include "allocator.h"
 #include "device.h"
 
 class Texture {
  public:
-  Texture(Device* device);
+  Texture(Device* device, MemoryAllocator* transiantAllocator);
   ~Texture();
   void addTexturePath(const std::string& fileName);
   void prepare();
@@ -37,10 +38,13 @@ class Texture {
 
   std::string texturePath;
   Device* device;
+  MemoryAllocator* transiantAllocator;
 
   uint32_t mipLevels;
   VkImage textureImage;
   VkDeviceMemory textureImageMemory;
   VkImageView textureImageView;
   VkSampler textureSampler;
+
+  VkFormat imageFormat;
 };

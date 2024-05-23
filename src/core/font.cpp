@@ -8,18 +8,19 @@
 #include "file.h"
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include <ft2build.h>
-// #include <stb_image_write.h>
+#include <stb_image_write.h>
 
 #include <fstream>
 #include FT_FREETYPE_H
 
-Font::Font(Device* device, const std::string& fontName, const unsigned int fontSize)
-    : fontSize{fontSize}, texture{device} {
-  bitmapInfo.bitmapSize.width = 512;
-  bitmapInfo.bitmapSize.height = 256;
-  bitmapInfo.firstCharacter = 32;
-  bitmapInfo.characterCount = 96;
+#include "log.h"
 
+Font::Font(
+    Device* device,
+    MemoryAllocator* transientAllocator,
+    const std::string& fontName,
+    const unsigned int fontSize)
+    : fontSize{fontSize}, texture{device, transientAllocator} {
   /* prepare font */
 
   FT_Library fontLibrary;
@@ -34,7 +35,9 @@ Font::Font(Device* device, const std::string& fontName, const unsigned int fontS
   int col = padding;
 
   const int textureWidth = 512;
-  char textureBuffer[textureWidth * textureWidth];
+  // char textureBuffer[textureWidth * textureWidth];
+  unsigned char* textureBuffer = new unsigned char[textureWidth * textureWidth];
+
   for (FT_ULong glyphIdx = 32; glyphIdx < 127; ++glyphIdx) {
     FT_UInt glyphIndex = FT_Get_Char_Index(fontFace, glyphIdx);
     FT_Load_Glyph(fontFace, glyphIndex, FT_LOAD_DEFAULT);
@@ -74,10 +77,10 @@ Font::Font(Device* device, const std::string& fontName, const unsigned int fontS
   FT_Done_Face(fontFace);
   FT_Done_FreeType(fontLibrary);
 
-  // texture.createFromData((unsigned char*)textureBuffer, textureWidth, textureWidth, 4, false);
-  texture.addTexturePath("texture.jpg");
+  texture.createFromData(textureBuffer, textureWidth, textureWidth, 1, false);
+  // texture.addTexturePath("texture.jpg");
 
-  // stbi_write_png("out.jpg", textureWidth, textureWidth, 4, textureBuffer, textureWidth * 3);
+  delete[] textureBuffer;
 }
 
 void Font::getGlyphCodepoint() {

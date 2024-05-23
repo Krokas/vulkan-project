@@ -35,20 +35,13 @@ set(SOURCES
         src/core/texture.cpp
         src/core/components/textComponent.h
         src/core/font.h
-        src/core/font.cpp)
+        src/core/font.cpp
+        src/utils/allocator.h
+        src/utils/allocator.cpp)
 
 set(Vulkan_Project_SRC
         src/main.cpp
-        ${SOURCES}
-        )
-
-# ~/VulkanSDK/1.2.189.0/macOS/bin/glslc
-#add_custom_target(
-#        CompileShaders ALL
-#        COMMAND ./compileShaders.sh
-#        COMMENT "Compiling shaders"
-#)
-
+        ${SOURCES})
 
 set(COMPILED_SHADERS 
         ${CMAKE_CURRENT_SOURCE_DIR}/resources/shaders/text_vert.spv

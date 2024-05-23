@@ -7,6 +7,7 @@
 #include <glm/gtc/constants.hpp>
 
 #include "UISystem.h"
+#include "allocator.h"
 #include "descriptor.h"
 #include "device.h"
 #include "font.h"
@@ -14,6 +15,7 @@
 #include "renderInfo.h"
 #include "renderer.h"
 #include "textComponent.h"
+#include "utils.h"
 #include "window.h"
 
 void initGlobalPool(Device& device, DescriptorInfo* descriptorInfo) {
@@ -104,6 +106,8 @@ void updateGlobalUbo(Camera& camera, DescriptorInfo* descriptorInfo, int frameIn
 }
 
 int main() {
+  MemoryAllocator transiantStorage = makeAllocator(MB(50));
+
   static constexpr int WIDTH = 800;
   static constexpr int HEIGHT = 600;
   static constexpr float MAX_FRAME_TIME = 1.0f;
@@ -121,7 +125,7 @@ int main() {
   window = std::make_shared<Window>(WIDTH, HEIGHT, "Vulkan project");
   device = std::make_shared<Device>(*window);
   renderer = std::make_shared<Renderer>(*window, *device);
-  debugFont = std::make_shared<Font>(device.get(), SOMETYPE_MONO_REGULAR, 8);
+  debugFont = std::make_shared<Font>(device.get(), &transiantStorage, SOMETYPE_MONO_REGULAR, 36);
   debugFont->prepare();
 
   initGlobalPool(*device, &descriptorInfo);

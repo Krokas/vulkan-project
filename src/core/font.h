@@ -4,10 +4,12 @@
 #include <string>
 #include <vector>
 
+#include "allocator.h"
 #include "model.h"
 #include "texture.h"
 
 #define SOMETYPE_MONO_REGULAR std::string("SometypeMono-Regular.ttf")
+#define ATARI_CLASIC_GRY_3 std::string("AtariClassic-gry3.ttf")
 
 struct Glyph {
   glm::vec2 offset;
@@ -18,17 +20,11 @@ struct Glyph {
 
 class Font {
  public:
-  struct BitmapSize {
-    int width;
-    int height;
-  };
-
-  struct FontData {
-    BitmapSize bitmapSize{};
-    int firstCharacter;
-    int characterCount;
-  };
-  Font(Device* device, const std::string& fontName, const unsigned int fontSize);
+  Font(
+      Device* device,
+      MemoryAllocator* transientAllocator,
+      const std::string& fontName,
+      const unsigned int fontSize);
 
   void getGlyphCodepoint();
   std::vector<Model::Vertex> getVertices(
@@ -37,11 +33,6 @@ class Font {
   void prepare() { texture.prepare(); }
 
  private:
-  FontData bitmapInfo;
-  //   stbtt_fontinfo info;
-  //   stbtt_bakedchar characterData[96];
-  unsigned char bitmap[512 * 256];
-  unsigned char fontBuffer[1 << 20];
   unsigned int fontSize;
 
   Texture texture;
