@@ -36,7 +36,6 @@ void Texture::prepare() {
 void Texture::createFromData(
     unsigned char* bitmap, int width, int height, int channels, bool useMipmap) {
   pixels = new unsigned char[width * width];
-  // pixels = *bitmap;
   memcpy(pixels, bitmap, width * width);
   texWidth = width;
   texHeight = height;
