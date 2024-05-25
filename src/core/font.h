@@ -1,6 +1,6 @@
 #pragma once
-// #include <stb_truetype.h>
 
+#include <glm/glm.hpp>
 #include <string>
 #include <vector>
 
@@ -31,9 +31,15 @@ class Font {
       const std::string& text, const glm::vec2& position, VkExtent2D extent);
   Texture* getTexture() { return &texture; }
   void prepare() { texture.prepare(); }
+  glm::ivec2 getGlyphSize(const char character) { return glyphs[character].size; }
+  glm::vec2 getGlyphOffset(const char character) { return glyphs[character].offset; }
+  glm::vec2 getGlyphAdvance(const char character) { return glyphs[character].advance; }
+  glm::ivec2 getTextureCoords(const char character) { return glyphs[character].textureCoords; }
+  int getTextureWidth() { return textureWidth; }
 
  private:
   unsigned int fontSize;
+  const int textureWidth = 512;
 
   Texture texture;
 

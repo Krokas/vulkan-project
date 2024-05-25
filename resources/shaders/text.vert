@@ -1,9 +1,14 @@
 #version 450
 
-// layout(location = 0) in vec3 position;
-// layout(location = 1) in vec3 color;
-// layout(location = 2) in vec3 normal;
-// layout(location = 3) in vec2 uv;
+layout(location = 0) in vec3 position;
+layout(location = 1) in vec3 color;
+layout(location = 2) in vec3 normal;
+layout(location = 3) in vec2 uv;
+
+layout(location = 4) in vec3 offset;
+layout(location = 5) in vec3 size;
+layout(location = 6) in vec2 textureCoords;
+layout(location = 7) in uint isVisible;
 
 // layout(location = 0) out vec2 fragTexCoord;
 
@@ -30,23 +35,25 @@
 
 layout (location = 0) out vec2 fragTextCoords;
 
+//vec2 size = vec2(0.1, 0.2);
+
 vec2 positions[6] = vec2[](
     // TOP - LEFT
-    vec2(-0.5, -0.5),
+    vec2(position.x, position.z),
     // TOP - RIGHT
-    vec2(0.5, -0.5),
+    vec2(position.x + size.x, position.z),
     // BOTTOM - RIGHT
-    vec2(0.5, 0.5),
+    vec2(position.x + size.x, position.z + size.y),
     // BOTTOM - RIGHT
-    vec2(0.5, 0.5),
+    vec2(position.x + size.x, position.z + size.y),
     // BOTTOM - LEFT
-    vec2(-0.5, 0.5),
+    vec2(position.x, position.z + size.y),
     // TOP - LEFT
-    vec2(-0.5, -0.5)
+    vec2(position.x, position.z)
 );
 
 
-vec2 textureCoords[6] = {
+vec2 texCoords[6] = {
     vec2(0.0, 0.0),
     vec2(1.0, 0.0),
     vec2(1.0, 1.0),
@@ -58,5 +65,5 @@ vec2 textureCoords[6] = {
 
 void main() {
     gl_Position = vec4(positions[gl_VertexIndex], 0.0, 1.0);
-    fragTextCoords = textureCoords[gl_VertexIndex];
+    fragTextCoords = texCoords[gl_VertexIndex];
 }

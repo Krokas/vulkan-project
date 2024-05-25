@@ -54,6 +54,8 @@ void UISystem::createPipeline(VkRenderPass renderPass) {
   pipelineConfig.bindingDescriptions.clear();*/
   pipelineConfig.renderPass = renderPass;
   pipelineConfig.pipelineLayout = pipelineLayout;
+  pipelineConfig.bindingDescriptions = Model::Vertex::getBindingDescriptions(true);
+  pipelineConfig.attributeDescriptions = Model::Vertex::getAttributeDescriptions(true);
 
   pipeline = std::make_unique<Pipeline>(device, "text_vert.spv", "text_frag.spv", pipelineConfig);
 }
@@ -66,6 +68,38 @@ void UISystem::update(FrameInfo& frameInfo) {
     // obj.model->~Model();
 
     unsigned int key = kv.first;
+
+    if (obj.text->text.length() > 0) {
+      std::vector<Model::Instance> instanceData{};
+      instanceData.resize(MAX_TEXT_LENGTH);
+      glm::vec2 startPos = obj.text->position;
+      for (int j = 0; j < MAX_TEXT_LENGTH; j++) {
+        instanceData[j].isVisible = false;
+      }
+      std::string text = obj.text->text;
+      for (int i = 0; i < obj.text->text.length(); i++) {
+        glm::ivec2 glyphSize = obj.text->font->getGlyphSize(text[i]);
+        glm::vec2 glyphOffset = obj.text->font->getGlyphOffset(text[i]);
+        glm::vec2 glyphAdvance = obj.text->font->getGlyphAdvance(text[i]);
+        int textureWidth = obj.text->font->getTextureWidth();
+
+        instanceData[i].isVisible = true;
+        instanceData[i].size = {0.1f, 0.3f, 0.0f};
+
+        // R_WARN(
+        //     "character %c size: x: %i, y: %i; offset: x: %f, y: %f; advance: x: %f, y: %f",
+        //     text[i],
+        //     glyphSize.x,
+        //     glyphSize.y,
+        //     glyphOffset.x,
+        //     glyphOffset.y,
+        //     glyphAdvance.x,
+        //     glyphAdvance.y);
+      }
+      // R_TRACE("The end! Starting position: {%f, %f}", startPos.x, startPos.y);
+      obj.model =
+          Model::createModelFromTextData(frameInfo.device, obj.text->position, instanceData);
+    }
 
     // auto textPair = frameInfo.texts.find(key);
     // auto vertices =
@@ -101,10 +135,11 @@ void UISystem::render(FrameInfo& frameInfo) {
 
     // ubo.color = obj.text->color;
     // ubo.position = obj.text->position;
+    obj.transform.translation = glm::vec3(obj.text->position.x, 1.0f, obj.text->position.y);
 
     obj.model->bind(frameInfo.commandBuffer);
     // obj.model->draw(frameInfo.commandBuffer);
-    obj.model->drawInstanced(frameInfo.commandBuffer);
+    obj.model->drawInstanced(frameInfo.commandBuffer, MAX_TEXT_LENGTH);
   }
 }
 

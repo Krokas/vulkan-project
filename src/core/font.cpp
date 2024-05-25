@@ -34,8 +34,6 @@ Font::Font(
   int row = 0;
   int col = padding;
 
-  const int textureWidth = 512;
-  // char textureBuffer[textureWidth * textureWidth];
   unsigned char* textureBuffer = new unsigned char[textureWidth * textureWidth];
 
   for (FT_ULong glyphIdx = 32; glyphIdx < 127; ++glyphIdx) {

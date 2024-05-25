@@ -151,10 +151,15 @@ int main() {
 
   GameObject text = GameObject::createGameObject();
   text.text = std::make_unique<TextComponent>();
+  text.text->font = std::move(debugFont);
+  text.text->text = "Rokas!";
   unsigned int textId = text.getId();
-  std::vector<Model::Vertex> vertices{};
-  vertices.resize(6);
-  std::shared_ptr<Model> model = Model::createTextFromData(*device, vertices);
+  std::vector<Model::Instance> instances{};
+  instances.resize(UISystem::MAX_TEXT_LENGTH);
+  text.text->position = UISystem::getScreenCoordinates(window->getExtent(), {10.0f, 10.0f});
+  std::shared_ptr<Model> model =
+      Model::createModelFromTextData(*device, text.text->position, instances);
+
   text.model = model;
   gameObjects.emplace(textId, std::move(text));
 
@@ -182,6 +187,7 @@ int main() {
           camera,
           descriptorInfo.globalDescriptorSets[frameIndex],
           gameObjects};
+      uiSystem.update(frameInfo);
       // Copy Uniform data to GPU
       updateGlobalUbo(camera, &descriptorInfo, frameIndex);
       updateTextUbo(uiSystem, &descriptorInfo, frameIndex);

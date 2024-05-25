@@ -24,9 +24,13 @@ struct hash<Model::Vertex> {
 };
 }  // namespace std
 
-Model::Model(Device& device, const Model::Builder& builder) : device{device} {
+Model::Model(Device& device, const Model::Builder& builder)
+    : device{device}, isInstanced{builder.isInstanced} {
   createVertexBuffers(builder.vertices);
   createIndexBuffers(builder.indices);
+  if (isInstanced) {
+    createInstaceBuffers(builder.instances);
+  }
 }
 
 Model::~Model() {}
@@ -89,6 +93,33 @@ void Model::createIndexBuffers(const std::vector<uint32_t>& indices) {
   device.copyBuffer(stagingBuffer.getBuffer(), indexBuffer->getBuffer(), bufferSize);
 }
 
+void Model::createInstaceBuffers(const std::vector<Instance>& instances) {
+  instanceCount = static_cast<uint32_t>(instances.size());
+  assert(instanceCount >= 1 && "Instance count must be at least 1");
+  VkDeviceSize bufferSize = sizeof(instances[0]) * instanceCount;
+  uint32_t instanceSize = sizeof(instances[0]);
+
+  Buffer stagingBuffer{
+      device,
+      instanceSize,
+      instanceCount,
+      VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+      VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+  };
+
+  stagingBuffer.map();
+  stagingBuffer.writeToBuffer((void*)instances.data());
+
+  instanceBuffer = std::make_unique<Buffer>(
+      device,
+      instanceSize,
+      instanceCount,
+      VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT,
+      VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+
+  device.copyBuffer(stagingBuffer.getBuffer(), instanceBuffer->getBuffer(), bufferSize);
+}
+
 std::unique_ptr<Model> Model::createModelFromFile(Device& device, const std::string& filename) {
   Builder builder{};
   builder.loadModel(filename);
@@ -103,28 +134,19 @@ std::unique_ptr<Model> Model::createFromData(
   return std::make_unique<Model>(device, builder);
 }
 
-std::unique_ptr<Model> Model::createTextFromData(
-    Device& device, const std::vector<Vertex>& vertices) {
-  std::vector<uint32_t> indices{};
+std::unique_ptr<Model> Model::createModelFromTextData(
+    Device& device, const glm::vec2& position, const std::vector<Instance>& instances) {
+  std::vector<Vertex> vertices{};
 
-  unsigned int quadCount = vertices.size() / 4;
-  unsigned int highestIndex = 0;
-  for (int i = 0; i < quadCount; i++) {
-    std::vector<uint32_t> indicesForQuad = getQuadIndices(highestIndex);
-
-    for (uint32_t index : indicesForQuad) {
-      indices.push_back(index);
-      if (highestIndex < index) {
-        highestIndex = index;
-      }
-    }
-    highestIndex++;
+  vertices.resize(6);
+  for (int i = 0; i < vertices.size(); i++) {
+    vertices[i].position = {position.x, 1.0f, position.y};
   }
 
   Builder builder{};
   builder.vertices = vertices;
-  builder.indices = indices;
-  return std::make_unique<Model>(device, builder);
+  builder.instances = instances;
+  builder.isInstanced = true;
   return std::make_unique<Model>(device, builder);
 }
 
@@ -142,32 +164,61 @@ void Model::drawInstanced(VkCommandBuffer commandBuffer) {
   }
 }
 
+void Model::drawInstanced(VkCommandBuffer commandBuffer, int instanceCount) {
+  vkCmdDraw(commandBuffer, vertexCount, instanceCount, 0, 0);
+}
+
 void Model::bind(VkCommandBuffer commandBuffer) {
   VkBuffer buffers[] = {vertexBuffer->getBuffer()};
+  VkBuffer instanceBuffers[] = {instanceBuffer->getBuffer()};
   VkDeviceSize offsets[] = {0};
   vkCmdBindVertexBuffers(commandBuffer, 0, 1, buffers, offsets);
 
   if (hasIndexBuffer) {
     vkCmdBindIndexBuffer(commandBuffer, indexBuffer->getBuffer(), 0, VK_INDEX_TYPE_UINT32);
   }
+
+  if (isInstanced) {
+    vkCmdBindVertexBuffers(commandBuffer, 1, 1, instanceBuffers, offsets);
+  }
 }
 
-std::vector<VkVertexInputBindingDescription> Model::Vertex::getBindingDescriptions() {
-  std::vector<VkVertexInputBindingDescription> bindingDescriptions(1);
+std::vector<VkVertexInputBindingDescription> Model::Vertex::getBindingDescriptions(
+    bool isInstanced) {
+  unsigned int bindingDescriptionCount = 1;
+  if (isInstanced) {
+    bindingDescriptionCount = 2;
+  }
+  std::vector<VkVertexInputBindingDescription> bindingDescriptions(bindingDescriptionCount);
   bindingDescriptions[0].binding = 0;
   bindingDescriptions[0].stride = sizeof(Vertex);
   bindingDescriptions[0].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+
+  if (isInstanced) {
+    bindingDescriptions[1].binding = 1;
+    bindingDescriptions[1].stride = sizeof(Instance);
+    bindingDescriptions[1].inputRate = VK_VERTEX_INPUT_RATE_INSTANCE;
+  }
+
   return bindingDescriptions;
 }
 
-std::vector<VkVertexInputAttributeDescription> Model::Vertex::getAttributeDescriptions() {
+std::vector<VkVertexInputAttributeDescription> Model::Vertex::getAttributeDescriptions(
+    bool isInstanced) {
   std::vector<VkVertexInputAttributeDescription> attributeDescriptions{};
 
-  //   attributeDescriptions.push_back({0, 0, VK_FORMAT_R32G32B32_SFLOAT, offsetof(Vertex,
-  //   position)}); attributeDescriptions.push_back({1, 0, VK_FORMAT_R32G32B32_SFLOAT,
-  //   offsetof(Vertex, color)}); attributeDescriptions.push_back({2, 0, VK_FORMAT_R32G32B32_SFLOAT,
-  //   offsetof(Vertex, normal)}); attributeDescriptions.push_back({3, 0, VK_FORMAT_R32G32_SFLOAT,
-  //   offsetof(Vertex, uv)});
+  attributeDescriptions.push_back({0, 0, VK_FORMAT_R32G32B32_SFLOAT, offsetof(Vertex, position)});
+  attributeDescriptions.push_back({1, 0, VK_FORMAT_R32G32B32_SFLOAT, offsetof(Vertex, color)});
+  attributeDescriptions.push_back({2, 0, VK_FORMAT_R32G32B32_SFLOAT, offsetof(Vertex, normal)});
+  attributeDescriptions.push_back({3, 0, VK_FORMAT_R32G32_SFLOAT, offsetof(Vertex, uv)});
+
+  if (isInstanced) {
+    attributeDescriptions.push_back({4, 1, VK_FORMAT_R32G32B32_SFLOAT, offsetof(Instance, offset)});
+    attributeDescriptions.push_back({5, 1, VK_FORMAT_R32G32B32_SFLOAT, offsetof(Instance, size)});
+    attributeDescriptions.push_back(
+        {6, 1, VK_FORMAT_R32G32_SFLOAT, offsetof(Instance, texturePos)});
+    attributeDescriptions.push_back({7, 1, VK_FORMAT_R32_UINT, offsetof(Instance, isVisible)});
+  }
 
   return attributeDescriptions;
 }

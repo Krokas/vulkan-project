@@ -18,7 +18,7 @@ struct TextUbo {
 class UISystem {
  public:
   // TODO: consider making bigger.
-  static const unsigned int MAX_TEXT_LENGTH = 255;
+  static const unsigned int MAX_TEXT_LENGTH = 500;
 
   using Map = std::unordered_map<std::string, Font>;
 
