@@ -95,14 +95,19 @@ void UISystem::update(FrameInfo& frameInfo) {
         glm::vec2 glyphAdvance = obj.text->font->getGlyphAdvance(text[i]);
         glm::ivec2 glyphTexturePos = obj.text->font->getTextureCoords(text[i]);
 
+        float offset = (float)glyphOffset.x + 8.0f;
+        if (obj.text->outline) {
+          offset += 4.0f;
+        }
+
         instanceData[i].position = {
-            ((float)nextPosition.x + (float)glyphOffset.x) * (float)screenToTexture.x /
+            ((float)nextPosition.x + offset) * (float)screenToTexture.x /
                 (float)frameInfo.windowExtent.width,
             ((float)nextPosition.y - (float)glyphOffset.y) * (float)screenToTexture.y /
                 (float)frameInfo.windowExtent.height,
             0.0f};
 
-        nextPosition += glm::vec2((float)glyphAdvance.x, (float)glyphAdvance.y);
+        nextPosition += glm::vec2((float)glyphAdvance.x + offset, (float)glyphAdvance.y);
 
         instanceData[i].textureSize = {
             (float)glyphSize.x / (float)textureWidth,

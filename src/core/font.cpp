@@ -23,7 +23,11 @@ Font::Font(
     : fontSize{fontSize}, texture{device, transientAllocator} {
   /* prepare font */
 
-  textureWidth = floor(fontSize * 12.8f);
+  textureWidth = floor(fontSize * 12.0f);
+  if (textureWidth < 512) {
+    textureWidth = 512;
+  }
+  R_TRACE("texture width is set to: %i", textureWidth)
 
   FT_Library fontLibrary;
   FT_Init_FreeType(&fontLibrary);
@@ -46,7 +50,7 @@ Font::Font(
     FT_Load_Glyph(fontFace, glyphIndex, FT_LOAD_DEFAULT);
     FT_Error error = FT_Render_Glyph(fontFace->glyph, FT_RENDER_MODE_SDF);
 
-    if (col + fontFace->glyph->bitmap.width + padding >= 512) {
+    if (col + fontFace->glyph->bitmap.width + padding >= textureWidth) {
       col = padding;
       row += fontSize + (padding * 3);
     }
@@ -82,6 +86,8 @@ Font::Font(
 
   texture.createFromData(textureBuffer, textureWidth, textureWidth, 1, false);
   // texture.addTexturePath("texture.jpg");
+
+  stbi_write_png("out_sdf.png", textureWidth, textureWidth, 1, textureBuffer, 0);
 
   delete[] textureBuffer;
 }

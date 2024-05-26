@@ -126,7 +126,7 @@ int main() {
   window = std::make_shared<Window>(WIDTH, HEIGHT, "Vulkan project");
   device = std::make_shared<Device>(*window);
   renderer = std::make_shared<Renderer>(*window, *device);
-  debugFont = std::make_shared<Font>(device.get(), &transiantStorage, ARIAL_BOLD, 60);
+  debugFont = std::make_shared<Font>(device.get(), &transiantStorage, ARIAL, 100);
   debugFont->prepare();
 
   initGlobalPool(*device, &descriptorInfo);
@@ -154,8 +154,8 @@ int main() {
   text.text = std::make_unique<TextComponent>();
   text.text->font = std::move(debugFont);
   text.text->text = "pirmas blynas!";
-  text.text->color = hexColorToUnitary({255, 0, 0});
-  text.text->outlineColor = hexColorToUnitary({255, 162, 127});
+  text.text->color = hexColorToUnitary({255, 255, 255});
+  text.text->outlineColor = hexColorToUnitary({80, 20, 80});
   text.text->outline = true;
   unsigned int textId = text.getId();
   std::vector<Model::Instance> instances{};
