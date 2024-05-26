@@ -124,7 +124,7 @@ void UISystem::update(FrameInfo& frameInfo) {
           obj.text->position,
           obj.text->color,
           obj.text->outlineColor,
-          obj.text->outlineLength / textureWidth,
+          obj.text->outline,
           instanceData);
     }
   }

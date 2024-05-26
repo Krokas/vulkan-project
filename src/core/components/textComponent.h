@@ -12,5 +12,5 @@ class TextComponent {
   glm::vec3 color{};
   std::string text{};
   glm::vec3 outlineColor{};
-  float outlineLength = 0;
+  bool outline = false;
 };

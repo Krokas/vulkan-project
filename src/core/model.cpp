@@ -139,7 +139,7 @@ std::unique_ptr<Model> Model::createModelFromTextData(
     const glm::vec2& position,
     glm::vec3& color,
     glm::vec3& outlineColor,
-    float outlineWidth,
+    bool outline,
     const std::vector<Instance>& instances) {
   std::vector<Vertex> vertices{};
 
@@ -148,7 +148,7 @@ std::unique_ptr<Model> Model::createModelFromTextData(
     vertices[i].position = {position.x, 1.0f, position.y};
     vertices[i].color = color;
     vertices[i].normal = outlineColor;
-    vertices[i].uv = {outlineWidth, 0.0f};
+    vertices[i].uv = {outline ? 1.0f : 0.0f, 0.0f};
   }
 
   Builder builder{};

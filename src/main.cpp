@@ -126,7 +126,7 @@ int main() {
   window = std::make_shared<Window>(WIDTH, HEIGHT, "Vulkan project");
   device = std::make_shared<Device>(*window);
   renderer = std::make_shared<Renderer>(*window, *device);
-  debugFont = std::make_shared<Font>(device.get(), &transiantStorage, ARIAL, 60);
+  debugFont = std::make_shared<Font>(device.get(), &transiantStorage, ARIAL_BOLD, 60);
   debugFont->prepare();
 
   initGlobalPool(*device, &descriptorInfo);
@@ -156,7 +156,7 @@ int main() {
   text.text->text = "pirmas blynas!";
   text.text->color = hexColorToUnitary({255, 0, 0});
   text.text->outlineColor = hexColorToUnitary({255, 162, 127});
-  text.text->outlineLength = 1.0f;
+  text.text->outline = true;
   unsigned int textId = text.getId();
   std::vector<Model::Instance> instances{};
   instances.resize(UISystem::MAX_TEXT_LENGTH);
@@ -166,7 +166,7 @@ int main() {
       text.text->position,
       text.text->color,
       text.text->outlineColor,
-      text.text->outlineLength / (float)text.text->font->getTextureWidth(),
+      text.text->outline,
       instances);
 
   text.model = model;

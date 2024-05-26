@@ -24,7 +24,6 @@ Font::Font(
   /* prepare font */
 
   textureWidth = floor(fontSize * 12.8f);
-  R_TRACE("texture width is set to: %i", textureWidth)
 
   FT_Library fontLibrary;
   FT_Init_FreeType(&fontLibrary);

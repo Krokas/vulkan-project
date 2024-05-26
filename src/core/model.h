@@ -58,7 +58,7 @@ class Model {
       const glm::vec2& position,
       glm::vec3& color,
       glm::vec3& outlineColor,
-      float outlineWidth,
+      bool outline,
       const std::vector<Instance>& instances);
 
   void bind(VkCommandBuffer commandBuffer);

@@ -14,7 +14,7 @@ layout(location = 8) in uint isVisible;
 
 layout (location = 0) out vec2 fragTextCoords;
 layout (location = 1) out vec3 fragTextColor;
-layout (location = 2) out float fragOutlineWidth;
+layout (location = 2) out float fragOutline;
 layout (location = 3) out vec3 fragOutlineColor;
 
 //vec2 size = vec2(0.1, 0.2);
@@ -49,6 +49,6 @@ void main() {
     gl_Position = vec4(positions[gl_VertexIndex], 0.0, 1.0);
     fragTextCoords = texCoords[gl_VertexIndex];
     fragTextColor = color;
-    fragOutlineWidth = uv.x;
+    fragOutline = uv.x;
     fragOutlineColor = normal;
 }
