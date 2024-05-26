@@ -215,8 +215,9 @@ std::vector<VkVertexInputAttributeDescription> Model::Vertex::getAttributeDescri
   if (isInstanced) {
     attributeDescriptions.push_back(
         {4, 1, VK_FORMAT_R32G32B32_SFLOAT, offsetof(Instance, position)});
-    attributeDescriptions.push_back({5, 1, VK_FORMAT_R32G32B32_SFLOAT, offsetof(Instance, offset)});
-    attributeDescriptions.push_back({6, 1, VK_FORMAT_R32G32B32_SFLOAT, offsetof(Instance, size)});
+    attributeDescriptions.push_back({5, 1, VK_FORMAT_R32G32B32_SFLOAT, offsetof(Instance, size)});
+    attributeDescriptions.push_back(
+        {6, 1, VK_FORMAT_R32G32_SFLOAT, offsetof(Instance, textureSize)});
     attributeDescriptions.push_back(
         {7, 1, VK_FORMAT_R32G32_SFLOAT, offsetof(Instance, texturePos)});
     attributeDescriptions.push_back({8, 1, VK_FORMAT_R32_UINT, offsetof(Instance, isVisible)});

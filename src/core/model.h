@@ -29,8 +29,8 @@ class Model {
 
   struct Instance {
     glm::vec3 position{};
-    glm::vec3 offset{};
     glm::vec3 size{};
+    glm::vec2 textureSize{};
     glm::vec2 texturePos{};
     bool isVisible = false;
   };

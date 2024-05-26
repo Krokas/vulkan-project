@@ -6,32 +6,10 @@ layout(location = 2) in vec3 normal;
 layout(location = 3) in vec2 uv;
 
 layout(location = 4) in vec3 instancePos;
-layout(location = 5) in vec3 offset;
-layout(location = 6) in vec3 size;
+layout(location = 5) in vec3 size;
+layout(location = 6) in vec2 textureSize;
 layout(location = 7) in vec2 textureCoords;
 layout(location = 8) in uint isVisible;
-
-// layout(location = 0) out vec2 fragTexCoord;
-
-// layout(set = 0, binding = 0) uniform TextUbo {
-//    vec3 color;
-// } ubo;
-
-// vec2 vertices[6] =
-//     {
-//         // Top Left
-//         transform.pos,
-//         // Bottom Left
-//         vec2(transform.pos + vec2(0.0, transform.size.y)),
-//         // Top Right
-//         vec2(transform.pos + vec2(transform.size.x, 0.0)),
-//         // Top Right
-//         vec2(transform.pos + vec2(transform.size.x, 0.0)),
-//         // Bottom Left
-//         vec2(transform.pos + vec2(0.0, transform.size.y)),
-//         // Bottom Right
-//         transform.pos + transform.size
-//     };
 
 
 layout (location = 0) out vec2 fragTextCoords;
@@ -56,11 +34,11 @@ vec2 positions[6] = vec2[](
 
 vec2 texCoords[6] = {
     vec2(textureCoords.x, textureCoords.y),
-    vec2(textureCoords.x + size.x, textureCoords.y),
-    vec2(textureCoords.x + size.x, textureCoords.y + size.y),
+    vec2(textureCoords.x + textureSize.x, textureCoords.y),
+    vec2(textureCoords.x + textureSize.x, textureCoords.y + textureSize.y),
 
-    vec2(textureCoords.x + size.x, textureCoords.y + size.y),
-    vec2(textureCoords.x, textureCoords.y + size.y),
+    vec2(textureCoords.x + textureSize.x, textureCoords.y + textureSize.y),
+    vec2(textureCoords.x, textureCoords.y + textureSize.y),
     vec2(textureCoords.x, textureCoords.y),
 };
 

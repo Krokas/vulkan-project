@@ -10,6 +10,7 @@
 
 #define SOMETYPE_MONO_REGULAR std::string("SometypeMono-Regular.ttf")
 #define ATARI_CLASIC_GRY_3 std::string("AtariClassic-gry3.ttf")
+#define ARIAL std::string("arial.ttf")
 
 struct Glyph {
   glm::vec2 offset;

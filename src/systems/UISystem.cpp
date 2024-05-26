@@ -96,31 +96,26 @@ void UISystem::update(FrameInfo& frameInfo) {
         glm::ivec2 glyphTexturePos = obj.text->font->getTextureCoords(text[i]);
 
         instanceData[i].position = {
-            (float)nextPosition.x + ((float)glyphOffset.x * (float)screenToTexture.x) /
-                                        (float)frameInfo.windowExtent.width,
-            (float)nextPosition.y - ((float)glyphOffset.y * (float)screenToTexture.y) /
-                                        (float)frameInfo.windowExtent.height,
+            ((float)nextPosition.x + (float)glyphOffset.x) * (float)screenToTexture.x /
+                (float)frameInfo.windowExtent.width,
+            ((float)nextPosition.y - (float)glyphOffset.y) * (float)screenToTexture.y /
+                (float)frameInfo.windowExtent.height,
             0.0f};
 
-        nextPosition += glm::vec2(
-            ((float)glyphAdvance.x * (float)screenToTexture.x) /
-                (float)frameInfo.windowExtent.width,
-            ((float)glyphAdvance.y * (float)screenToTexture.y) /
-                (float)frameInfo.windowExtent.height);
+        nextPosition += glm::vec2((float)glyphAdvance.x, (float)glyphAdvance.y);
+
+        instanceData[i].textureSize = {
+            (float)glyphSize.x / (float)textureWidth,
+            (float)glyphSize.y / (float)textureWidth};
 
         instanceData[i].texturePos = {
-            (float)glyphTexturePos.x / textureWidth,
-            (float)glyphTexturePos.y / textureWidth};
+            (float)glyphTexturePos.x / (float)textureWidth,
+            (float)glyphTexturePos.y / (float)textureWidth};
 
         instanceData[i].isVisible = true;
         instanceData[i].size = {
             (float)glyphSize.x / (float)textureWidth,
             (float)glyphSize.y / (float)textureWidth,
-            0.0f};
-
-        instanceData[i].offset = {
-            (float)glyphOffset.x / (float)textureWidth,
-            (float)glyphOffset.y / (float)textureWidth,
             0.0f};
       }
 
