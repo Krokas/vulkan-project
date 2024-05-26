@@ -11,6 +11,7 @@
 #define SOMETYPE_MONO_REGULAR std::string("SometypeMono-Regular.ttf")
 #define ATARI_CLASIC_GRY_3 std::string("AtariClassic-gry3.ttf")
 #define ARIAL std::string("arial.ttf")
+#define ARIAL_BOLD std::string("arialbd.ttf")
 
 struct Glyph {
   glm::vec2 offset;
@@ -40,7 +41,7 @@ class Font {
 
  private:
   unsigned int fontSize;
-  const int textureWidth = 512;
+  int textureWidth = 512;
 
   Texture texture;
 

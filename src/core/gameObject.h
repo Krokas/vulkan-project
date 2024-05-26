@@ -5,6 +5,7 @@
 #include <unordered_map>
 
 // #include "MovementComponent.h"
+#include "font.h"
 #include "model.h"
 #include "textComponent.h"
 

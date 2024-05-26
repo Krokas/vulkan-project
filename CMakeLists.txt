@@ -37,7 +37,8 @@ set(SOURCES
         src/core/font.h
         src/core/font.cpp
         src/utils/allocator.h
-        src/utils/allocator.cpp)
+        src/utils/allocator.cpp
+        src/utils/color.h)
 
 set(Vulkan_Project_SRC
         src/main.cpp

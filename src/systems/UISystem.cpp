@@ -114,13 +114,18 @@ void UISystem::update(FrameInfo& frameInfo) {
 
         instanceData[i].isVisible = true;
         instanceData[i].size = {
-            (float)glyphSize.x / (float)textureWidth,
-            (float)glyphSize.y / (float)textureWidth,
+            (float)glyphSize.x * (float)screenToTexture.x / (float)frameInfo.windowExtent.width,
+            (float)glyphSize.y * (float)screenToTexture.y / (float)frameInfo.windowExtent.height,
             0.0f};
       }
 
-      obj.model =
-          Model::createModelFromTextData(frameInfo.device, obj.text->position, instanceData);
+      obj.model = Model::createModelFromTextData(
+          frameInfo.device,
+          obj.text->position,
+          obj.text->color,
+          obj.text->outlineColor,
+          obj.text->outlineLength / textureWidth,
+          instanceData);
     }
   }
 }

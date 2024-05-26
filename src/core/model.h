@@ -54,7 +54,12 @@ class Model {
   static std::unique_ptr<Model> createFromData(
       Device& device, const std::vector<Vertex>& vertices, const std::vector<uint32_t>& indices);
   static std::unique_ptr<Model> createModelFromTextData(
-      Device& device, const glm::vec2& position, const std::vector<Instance>& instances);
+      Device& device,
+      const glm::vec2& position,
+      glm::vec3& color,
+      glm::vec3& outlineColor,
+      float outlineWidth,
+      const std::vector<Instance>& instances);
 
   void bind(VkCommandBuffer commandBuffer);
   void draw(VkCommandBuffer commandBuffer);

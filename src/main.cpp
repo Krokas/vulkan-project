@@ -8,6 +8,7 @@
 
 #include "UISystem.h"
 #include "allocator.h"
+#include "color.h"
 #include "descriptor.h"
 #include "device.h"
 #include "font.h"
@@ -106,7 +107,7 @@ void updateGlobalUbo(Camera& camera, DescriptorInfo* descriptorInfo, int frameIn
 }
 
 int main() {
-  MemoryAllocator transiantStorage = makeAllocator(MB(50));
+  MemoryAllocator transiantStorage = makeAllocator(MB(100));
 
   static constexpr int WIDTH = 800;
   static constexpr int HEIGHT = 600;
@@ -125,7 +126,7 @@ int main() {
   window = std::make_shared<Window>(WIDTH, HEIGHT, "Vulkan project");
   device = std::make_shared<Device>(*window);
   renderer = std::make_shared<Renderer>(*window, *device);
-  debugFont = std::make_shared<Font>(device.get(), &transiantStorage, ARIAL, 20);
+  debugFont = std::make_shared<Font>(device.get(), &transiantStorage, ARIAL, 60);
   debugFont->prepare();
 
   initGlobalPool(*device, &descriptorInfo);
@@ -153,12 +154,20 @@ int main() {
   text.text = std::make_unique<TextComponent>();
   text.text->font = std::move(debugFont);
   text.text->text = "pirmas blynas!";
+  text.text->color = hexColorToUnitary({255, 0, 0});
+  text.text->outlineColor = hexColorToUnitary({255, 162, 127});
+  text.text->outlineLength = 1.0f;
   unsigned int textId = text.getId();
   std::vector<Model::Instance> instances{};
   instances.resize(UISystem::MAX_TEXT_LENGTH);
   text.text->position = UISystem::getScreenCoordinates(window->getExtent(), {10.0f, 30.0f});
-  std::shared_ptr<Model> model =
-      Model::createModelFromTextData(*device, text.text->position, instances);
+  std::shared_ptr<Model> model = Model::createModelFromTextData(
+      *device,
+      text.text->position,
+      text.text->color,
+      text.text->outlineColor,
+      text.text->outlineLength / (float)text.text->font->getTextureWidth(),
+      instances);
 
   text.model = model;
   gameObjects.emplace(textId, std::move(text));

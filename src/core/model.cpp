@@ -135,12 +135,20 @@ std::unique_ptr<Model> Model::createFromData(
 }
 
 std::unique_ptr<Model> Model::createModelFromTextData(
-    Device& device, const glm::vec2& position, const std::vector<Instance>& instances) {
+    Device& device,
+    const glm::vec2& position,
+    glm::vec3& color,
+    glm::vec3& outlineColor,
+    float outlineWidth,
+    const std::vector<Instance>& instances) {
   std::vector<Vertex> vertices{};
 
   vertices.resize(6);
   for (int i = 0; i < vertices.size(); i++) {
     vertices[i].position = {position.x, 1.0f, position.y};
+    vertices[i].color = color;
+    vertices[i].normal = outlineColor;
+    vertices[i].uv = {outlineWidth, 0.0f};
   }
 
   Builder builder{};

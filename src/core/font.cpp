@@ -23,6 +23,9 @@ Font::Font(
     : fontSize{fontSize}, texture{device, transientAllocator} {
   /* prepare font */
 
+  textureWidth = floor(fontSize * 12.8f);
+  R_TRACE("texture width is set to: %i", textureWidth)
+
   FT_Library fontLibrary;
   FT_Init_FreeType(&fontLibrary);
 
@@ -30,7 +33,7 @@ Font::Font(
   FT_New_Face(fontLibrary, File::getFontFilePath(fontName).c_str(), 0, &fontFace);
   FT_Set_Pixel_Sizes(fontFace, 0, fontSize);
 
-  int padding = 2;
+  int padding = 5;
   int row = 0;
   int col = padding;
 
@@ -42,11 +45,11 @@ Font::Font(
   for (FT_ULong glyphIdx = 32; glyphIdx < 127; ++glyphIdx) {
     FT_UInt glyphIndex = FT_Get_Char_Index(fontFace, glyphIdx);
     FT_Load_Glyph(fontFace, glyphIndex, FT_LOAD_DEFAULT);
-    FT_Error error = FT_Render_Glyph(fontFace->glyph, FT_RENDER_MODE_NORMAL);
+    FT_Error error = FT_Render_Glyph(fontFace->glyph, FT_RENDER_MODE_SDF);
 
     if (col + fontFace->glyph->bitmap.width + padding >= 512) {
       col = padding;
-      row += fontSize;
+      row += fontSize + (padding * 3);
     }
 
     // Font Height
