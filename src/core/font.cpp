@@ -35,6 +35,9 @@ Font::Font(
   int col = padding;
 
   unsigned char* textureBuffer = new unsigned char[textureWidth * textureWidth];
+  for (int i = 0; i < textureWidth * textureWidth; i++) {
+    textureBuffer[i] = 0;
+  }
 
   for (FT_ULong glyphIdx = 32; glyphIdx < 127; ++glyphIdx) {
     FT_UInt glyphIndex = FT_Get_Char_Index(fontFace, glyphIdx);

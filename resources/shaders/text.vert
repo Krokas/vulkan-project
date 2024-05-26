@@ -5,10 +5,11 @@ layout(location = 1) in vec3 color;
 layout(location = 2) in vec3 normal;
 layout(location = 3) in vec2 uv;
 
-layout(location = 4) in vec3 offset;
-layout(location = 5) in vec3 size;
-layout(location = 6) in vec2 textureCoords;
-layout(location = 7) in uint isVisible;
+layout(location = 4) in vec3 instancePos;
+layout(location = 5) in vec3 offset;
+layout(location = 6) in vec3 size;
+layout(location = 7) in vec2 textureCoords;
+layout(location = 8) in uint isVisible;
 
 // layout(location = 0) out vec2 fragTexCoord;
 
@@ -39,28 +40,28 @@ layout (location = 0) out vec2 fragTextCoords;
 
 vec2 positions[6] = vec2[](
     // TOP - LEFT
-    vec2(position.x + offset.x, position.z + offset.y),
+    vec2(position.x + instancePos.x, position.z + instancePos.y),
     // TOP - RIGHT
-    vec2(position.x + offset.x + size.x, position.z + offset.y),
+    vec2(position.x + instancePos.x + size.x, position.z + instancePos.y),
     // BOTTOM - RIGHT
-    vec2(position.x + offset.x + size.x, position.z + offset.y + size.y),
+    vec2(position.x + instancePos.x + size.x, position.z + instancePos.y + size.y),
     // BOTTOM - RIGHT
-    vec2(position.x + offset.x + size.x, position.z + offset.y + size.y),
+    vec2(position.x + instancePos.x + size.x, position.z + instancePos.y + size.y),
     // BOTTOM - LEFT
-    vec2(position.x + offset.x, position.z + offset.y + size.y),
+    vec2(position.x + instancePos.x, position.z + instancePos.y + size.y),
     // TOP - LEFT
-    vec2(position.x + offset.x, position.z + offset.y)
+    vec2(position.x + instancePos.x, position.z + instancePos.y)
 );
 
 
 vec2 texCoords[6] = {
-    vec2(0.0, 0.0),
-    vec2(1.0, 0.0),
-    vec2(1.0, 1.0),
+    vec2(textureCoords.x, textureCoords.y),
+    vec2(textureCoords.x + size.x, textureCoords.y),
+    vec2(textureCoords.x + size.x, textureCoords.y + size.y),
 
-    vec2(1.0, 1.0),
-    vec2(0.0, 1.0),
-    vec2(0.0, 0.0),
+    vec2(textureCoords.x + size.x, textureCoords.y + size.y),
+    vec2(textureCoords.x, textureCoords.y + size.y),
+    vec2(textureCoords.x, textureCoords.y),
 };
 
 void main() {
