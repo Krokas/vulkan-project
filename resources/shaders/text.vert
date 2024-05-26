@@ -39,17 +39,17 @@ layout (location = 0) out vec2 fragTextCoords;
 
 vec2 positions[6] = vec2[](
     // TOP - LEFT
-    vec2(position.x, position.z),
+    vec2(position.x + offset.x, position.z + offset.y),
     // TOP - RIGHT
-    vec2(position.x + size.x, position.z),
+    vec2(position.x + offset.x + size.x, position.z + offset.y),
     // BOTTOM - RIGHT
-    vec2(position.x + size.x, position.z + size.y),
+    vec2(position.x + offset.x + size.x, position.z + offset.y + size.y),
     // BOTTOM - RIGHT
-    vec2(position.x + size.x, position.z + size.y),
+    vec2(position.x + offset.x + size.x, position.z + offset.y + size.y),
     // BOTTOM - LEFT
-    vec2(position.x, position.z + size.y),
+    vec2(position.x + offset.x, position.z + offset.y + size.y),
     // TOP - LEFT
-    vec2(position.x, position.z)
+    vec2(position.x + offset.x, position.z + offset.y)
 );
 
 

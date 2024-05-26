@@ -77,24 +77,50 @@ void UISystem::update(FrameInfo& frameInfo) {
         instanceData[j].isVisible = false;
       }
       std::string text = obj.text->text;
+
+      glm::vec2 nextPosition{0.0f};
+
       for (int i = 0; i < obj.text->text.length(); i++) {
         glm::ivec2 glyphSize = obj.text->font->getGlyphSize(text[i]);
         glm::vec2 glyphOffset = obj.text->font->getGlyphOffset(text[i]);
         glm::vec2 glyphAdvance = obj.text->font->getGlyphAdvance(text[i]);
         int textureWidth = obj.text->font->getTextureWidth();
 
-        instanceData[i].isVisible = true;
-        instanceData[i].size = {0.1f, 0.3f, 0.0f};
+                // float sizeX = (float)glyphSize.x / (float)frameInfo.windowExtent.width;
+        // float sizeY = (float)glyphSize.y / (float)frameInfo.windowExtent.height;
 
-        // R_WARN(
-        //     "character %c size: x: %i, y: %i; offset: x: %f, y: %f; advance: x: %f, y: %f",
-        //     text[i],
-        //     glyphSize.x,
-        //     glyphSize.y,
-        //     glyphOffset.x,
-        //     glyphOffset.y,
-        //     glyphAdvance.x,
-        //     glyphAdvance.y);
+        instanceData[i].isVisible = true;
+        instanceData[i].size = {
+            (float)glyphSize.x / (float)frameInfo.windowExtent.width,
+            (float)glyphSize.y / (float)frameInfo.windowExtent.height,
+            0.0f};
+
+        // float offsetX = (float)glyphOffset.x / (float)frameInfo.windowExtent.width;
+        // float offsetY = (float)glyphOffset.y / (float)frameInfo.windowExtent.height;
+
+        if (i == 0) {
+          instanceData[i].offset = {
+              0.0f - (float)glyphOffset.x / (float)frameInfo.windowExtent.width,
+              0.0f - (float)glyphOffset.y / (float)frameInfo.windowExtent.height,
+              0.0f};
+        } else {
+          instanceData[i].offset = {
+              nextPosition.x - (float)glyphOffset.x / (float)frameInfo.windowExtent.width,
+              nextPosition.y - (float)glyphOffset.y / (float)frameInfo.windowExtent.height,
+              0.0f};
+        }
+
+        nextPosition += glm::vec2(
+            (float)glyphAdvance.x / (float)frameInfo.windowExtent.width,
+            (float)glyphAdvance.y / (float)frameInfo.windowExtent.height);
+
+        R_WARN(
+            "character %c offset: x: %f, y: %f; advance: x: %f, y: %f",
+            text[i],
+            glyphOffset.x,
+            glyphOffset.y,
+            glyphAdvance.x,
+            glyphAdvance.y);
       }
       // R_TRACE("The end! Starting position: {%f, %f}", startPos.x, startPos.y);
       obj.model =

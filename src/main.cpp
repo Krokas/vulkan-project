@@ -125,7 +125,7 @@ int main() {
   window = std::make_shared<Window>(WIDTH, HEIGHT, "Vulkan project");
   device = std::make_shared<Device>(*window);
   renderer = std::make_shared<Renderer>(*window, *device);
-  debugFont = std::make_shared<Font>(device.get(), &transiantStorage, SOMETYPE_MONO_REGULAR, 36);
+  debugFont = std::make_shared<Font>(device.get(), &transiantStorage, SOMETYPE_MONO_REGULAR, 50);
   debugFont->prepare();
 
   initGlobalPool(*device, &descriptorInfo);
@@ -156,7 +156,7 @@ int main() {
   unsigned int textId = text.getId();
   std::vector<Model::Instance> instances{};
   instances.resize(UISystem::MAX_TEXT_LENGTH);
-  text.text->position = UISystem::getScreenCoordinates(window->getExtent(), {10.0f, 10.0f});
+  text.text->position = UISystem::getScreenCoordinates(window->getExtent(), {10.0f, 30.0f});
   std::shared_ptr<Model> model =
       Model::createModelFromTextData(*device, text.text->position, instances);
 
