@@ -69,14 +69,14 @@ void UISystem::update(FrameInfo& frameInfo) {
 
     unsigned int key = kv.first;
 
-    if (obj.text->text.length() > 0) {
+    if (obj.text->text->length() > 0) {
       std::vector<Model::Instance> instanceData{};
       instanceData.resize(MAX_TEXT_LENGTH);
       glm::vec2 startPos = obj.text->position;
       for (int j = 0; j < MAX_TEXT_LENGTH; j++) {
         instanceData[j].isVisible = false;
       }
-      std::string text = obj.text->text;
+      std::string text = *obj.text->text;
       int textureWidth = obj.text->font->getTextureWidth();
 
       glm::vec2 textureToSceen = {
@@ -89,7 +89,7 @@ void UISystem::update(FrameInfo& frameInfo) {
 
       glm::vec2 nextPosition{0.0f};
 
-      for (int i = 0; i < obj.text->text.length(); i++) {
+      for (int i = 0; i < obj.text->text->length(); i++) {
         glm::ivec2 glyphSize = obj.text->font->getGlyphSize(text[i]);
         glm::vec2 glyphOffset = obj.text->font->getGlyphOffset(text[i]);
         glm::vec2 glyphAdvance = obj.text->font->getGlyphAdvance(text[i]);

@@ -10,7 +10,7 @@ class TextComponent {
   std::shared_ptr<Font> font;
   glm::vec2 position{};
   glm::vec3 color{};
-  std::string text{};
+  std::string* text{};
   glm::vec3 outlineColor{};
   bool outline = false;
 };

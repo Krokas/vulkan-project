@@ -16,6 +16,7 @@
 #include "renderInfo.h"
 #include "renderer.h"
 #include "textComponent.h"
+#include "timer.h"
 #include "utils.h"
 #include "window.h"
 
@@ -106,16 +107,49 @@ void updateGlobalUbo(Camera& camera, DescriptorInfo* descriptorInfo, int frameIn
   descriptorInfo->uboBuffers[frameIndex]->flush();
 }
 
+void addText(
+    std::shared_ptr<Font> font,
+    std::shared_ptr<Window> window,
+    std::shared_ptr<Device> device,
+    GameObject::Map* gameObjects,
+    std::string& textReference,
+    const glm::vec2& position,
+    const glm::vec3& color,
+    bool outline,
+    const glm::vec3& outlineColor) {
+  GameObject text = GameObject::createGameObject();
+  text.text = std::make_unique<TextComponent>();
+  text.text->font = std::move(font);
+  text.text->text = &textReference;
+  text.text->color = hexColorToUnitary(color);
+  text.text->outlineColor = hexColorToUnitary(outlineColor);
+  text.text->outline = outline;
+  unsigned int textId = text.getId();
+  std::vector<Model::Instance> instances{};
+  instances.resize(UISystem::MAX_TEXT_LENGTH);
+  text.text->position = UISystem::getScreenCoordinates(window->getExtent(), position);
+  std::shared_ptr<Model> model = Model::createModelFromTextData(
+      *device,
+      text.text->position,
+      text.text->color,
+      text.text->outlineColor,
+      text.text->outline,
+      instances);
+
+  text.model = model;
+  gameObjects->emplace(textId, std::move(text));
+}
+
 int main() {
   MemoryAllocator transiantStorage = makeAllocator(MB(100));
 
   static constexpr int WIDTH = 800;
   static constexpr int HEIGHT = 600;
-  static constexpr float MAX_FRAME_TIME = 1.0f;
 
   static std::shared_ptr<Window> window;
   static std::shared_ptr<Device> device;
   static std::shared_ptr<Renderer> renderer;
+  static std::shared_ptr<Timer> timer;
   static DescriptorInfo descriptorInfo{};
   descriptorInfo.uboBuffers.resize(SwapChain::MAX_FRAMES_IN_FLIGHT);
   static std::shared_ptr<Font> debugFont;
@@ -126,12 +160,15 @@ int main() {
   window = std::make_shared<Window>(WIDTH, HEIGHT, "Vulkan project");
   device = std::make_shared<Device>(*window);
   renderer = std::make_shared<Renderer>(*window, *device);
-  debugFont = std::make_shared<Font>(device.get(), &transiantStorage, ARIAL, 100);
+  debugFont = std::make_shared<Font>(device.get(), &transiantStorage, ARIAL, 20);
   debugFont->prepare();
 
   initGlobalPool(*device, &descriptorInfo);
   initGlobalDescriptors(*device, &descriptorInfo);
   initTextImageDescriptor(*device, &descriptorInfo, debugFont.get());
+
+  std::string debugText = "pirmas blynas!";
+  std::string fps = "0";
 
   UISystem uiSystem{
       *device,
@@ -140,7 +177,7 @@ int main() {
       descriptorInfo.textSetLayout->getDescriptorSetLayout(),
       &descriptorInfo};
 
-  auto currentTime = std::chrono::high_resolution_clock::now();
+  timer = std::make_shared<Timer>();
 
   // TODO: This is way too much lines to render a single triangle/square.
 
@@ -150,52 +187,51 @@ int main() {
   // later like outline and text color.
   // 3. update() data for rendering the text using instanced rendering.
 
-  GameObject text = GameObject::createGameObject();
-  text.text = std::make_unique<TextComponent>();
-  text.text->font = std::move(debugFont);
-  text.text->text = "pirmas blynas!";
-  text.text->color = hexColorToUnitary({255, 255, 255});
-  text.text->outlineColor = hexColorToUnitary({80, 20, 80});
-  text.text->outline = true;
-  unsigned int textId = text.getId();
-  std::vector<Model::Instance> instances{};
-  instances.resize(UISystem::MAX_TEXT_LENGTH);
-  text.text->position = UISystem::getScreenCoordinates(window->getExtent(), {10.0f, 30.0f});
-  std::shared_ptr<Model> model = Model::createModelFromTextData(
-      *device,
-      text.text->position,
-      text.text->color,
-      text.text->outlineColor,
-      text.text->outline,
-      instances);
+  addText(
+      debugFont,
+      window,
+      device,
+      &gameObjects,
+      debugText,
+      {10.0f, 30.0f},
+      {255, 255, 255},
+      true,
+      {80, 20, 80});
 
-  text.model = model;
-  gameObjects.emplace(textId, std::move(text));
+  addText(
+      debugFont,
+      window,
+      device,
+      &gameObjects,
+      fps,
+      {10.0f, 70.0f},
+      {255, 255, 255},
+      true,
+      {80, 20, 80});
 
   // Text setup end
 
   while (!window->shouldClose()) {
     window->pollEvents();
 
-    auto newTime = std::chrono::high_resolution_clock::now();
-    auto frameTime =
-        std::chrono::duration<float, std::chrono::seconds::period>(newTime - currentTime).count();
+    timer->update();
 
-    frameTime = glm::min(frameTime, MAX_FRAME_TIME);
-
-    currentTime = newTime;
     // main loop
     if (auto commandBuffer = renderer->beginFrame()) {
       int frameIndex = renderer->getCurrentFrameIndex();
       FrameInfo frameInfo{
           frameIndex,
-          frameTime,
+          *timer,
           commandBuffer,
           window->getExtent(),
           *device,
           camera,
           descriptorInfo.globalDescriptorSets[frameIndex],
           gameObjects};
+
+      debugText = std::to_string(timer->getFrameTimeMS());  //.erase(5);
+      fps = std::to_string(timer->getFPS());
+
       uiSystem.update(frameInfo);
       // Copy Uniform data to GPU
       updateGlobalUbo(camera, &descriptorInfo, frameIndex);

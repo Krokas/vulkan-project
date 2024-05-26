@@ -11,6 +11,7 @@
 #include "device.h"
 #include "gameObject.h"
 #include "swapChain.h"
+#include "timer.h"
 
 #define MAX_LIGHTS 10
 
@@ -21,7 +22,7 @@ struct PointLight {
 
 struct FrameInfo {
   int frameIndex;
-  float frameTime;
+  Timer& timer;
   VkCommandBuffer commandBuffer;
   VkExtent2D windowExtent;
   Device& device;
