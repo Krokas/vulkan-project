@@ -160,7 +160,7 @@ int main() {
   window = std::make_shared<Window>(WIDTH, HEIGHT, "Vulkan project");
   device = std::make_shared<Device>(*window);
   renderer = std::make_shared<Renderer>(*window, *device);
-  debugFont = std::make_shared<Font>(device.get(), &transiantStorage, ARIAL, 20);
+  debugFont = std::make_shared<Font>(device.get(), &transiantStorage, ARIAL, 16);
   debugFont->prepare();
 
   initGlobalPool(*device, &descriptorInfo);
@@ -179,21 +179,13 @@ int main() {
 
   timer = std::make_shared<Timer>();
 
-  // TODO: This is way too much lines to render a single triangle/square.
-
-  // THE WAY TO DO IT:
-  // 1. Set a <Font> pointer on a text component.
-  // 2. Set a text <std::string> to text component. And position <glm::vec2>. TODO: extra options
-  // later like outline and text color.
-  // 3. update() data for rendering the text using instanced rendering.
-
   addText(
       debugFont,
       window,
       device,
       &gameObjects,
       debugText,
-      {10.0f, 30.0f},
+      {0.0f, 15.0f},
       {255, 255, 255},
       true,
       {80, 20, 80});
@@ -204,12 +196,10 @@ int main() {
       device,
       &gameObjects,
       fps,
-      {10.0f, 70.0f},
+      {0.0f, 30.0f},
       {255, 255, 255},
       true,
       {80, 20, 80});
-
-  // Text setup end
 
   while (!window->shouldClose()) {
     window->pollEvents();
@@ -229,8 +219,8 @@ int main() {
           descriptorInfo.globalDescriptorSets[frameIndex],
           gameObjects};
 
-      debugText = std::to_string(timer->getFrameTimeMS());  //.erase(5);
-      fps = std::to_string(timer->getFPS());
+      debugText = "frame time: " + std::to_string(timer->getFrameTime());
+      fps = "fps: " + std::to_string(timer->getFPS());
 
       uiSystem.update(frameInfo);
       // Copy Uniform data to GPU

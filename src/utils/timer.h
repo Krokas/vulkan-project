@@ -9,12 +9,9 @@ class Timer {
   Timer();
   void update();
   float getFrameTime() { return frameTime; }
-  float getFrameTimeMS() { return frameTime / 1000.0f; }
-  int getFPS() { return frameCount; }
+  unsigned int getFPS();
 
  private:
   std::chrono::steady_clock::time_point currentTime;
   float frameTime;
-  std::chrono::steady_clock::time_point fpsSecond;
-  int frameCount;
 };
