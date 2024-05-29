@@ -3,7 +3,7 @@
 #include "log.h"
 
 Input::Input(GLFWwindow* window) : window{window} {
-  glfwSetWindowUserPointer(window, (void*)this);
+  glfwGetWindowUserPointer(window);
   glfwSetScrollCallback(window, scrollCallback);
 
   InputData defaultData{};
