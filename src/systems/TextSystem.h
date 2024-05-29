@@ -15,23 +15,23 @@ struct TextUbo {
   // alignas(16) glm::vec2 position{0.0f};
 };
 
-class UISystem {
+class TextSystem {
  public:
   // TODO: consider making bigger.
   static const unsigned int MAX_TEXT_LENGTH = 500;
 
   using Map = std::unordered_map<std::string, Font>;
 
-  UISystem(
+  TextSystem(
       Device& device,
       Window& window,
       VkRenderPass renderPass,
       VkDescriptorSetLayout globalSetLayout,
       DescriptorInfo* descriptorInfo);
-  ~UISystem();
+  ~TextSystem();
 
-  UISystem(const UISystem&) = delete;
-  UISystem& operator=(const UISystem&) = delete;
+  TextSystem(const TextSystem&) = delete;
+  TextSystem& operator=(const TextSystem&) = delete;
 
   TextUbo* getUbo() { return &ubo; }
   void update(FrameInfo& frameInfo);

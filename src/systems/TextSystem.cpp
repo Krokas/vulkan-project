@@ -1,4 +1,4 @@
-#include "UISystem.h"
+#include "TextSystem.h"
 
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
@@ -11,7 +11,7 @@
 #include "file.h"
 #include "font.h"
 
-UISystem::UISystem(
+TextSystem::TextSystem(
     Device& device,
     Window& window,
     VkRenderPass renderPass,
@@ -22,9 +22,9 @@ UISystem::UISystem(
   createPipeline(renderPass);
 }
 
-UISystem::~UISystem() { vkDestroyPipelineLayout(device.device(), pipelineLayout, nullptr); }
+TextSystem::~TextSystem() { vkDestroyPipelineLayout(device.device(), pipelineLayout, nullptr); }
 
-void UISystem::createPipelineLayout(VkDescriptorSetLayout globalSetLayout) {
+void TextSystem::createPipelineLayout(VkDescriptorSetLayout globalSetLayout) {
   /*VkPushConstantRange pushConstantRange{};
   pushConstantRange.stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT;
   pushConstantRange.offset = 0;
@@ -45,7 +45,7 @@ void UISystem::createPipelineLayout(VkDescriptorSetLayout globalSetLayout) {
   }
 }
 
-void UISystem::createPipeline(VkRenderPass renderPass) {
+void TextSystem::createPipeline(VkRenderPass renderPass) {
   assert(pipelineLayout != nullptr && "Cannot create pipeline before pipeline layout");
   PipelineConfigInfo pipelineConfig{};
   Pipeline::defaultPipelineConfigInfo(pipelineConfig);
@@ -60,7 +60,7 @@ void UISystem::createPipeline(VkRenderPass renderPass) {
   pipeline = std::make_unique<Pipeline>(device, "text_vert.spv", "text_frag.spv", pipelineConfig);
 }
 
-void UISystem::update(FrameInfo& frameInfo) {
+void TextSystem::update(FrameInfo& frameInfo) {
   for (auto& kv : frameInfo.gameObjects) {
     auto& obj = kv.second;
     if (obj.text == nullptr) continue;
@@ -95,7 +95,7 @@ void UISystem::update(FrameInfo& frameInfo) {
         glm::vec2 glyphAdvance = obj.text->font->getGlyphAdvance(text[i]);
         glm::ivec2 glyphTexturePos = obj.text->font->getTextureCoords(text[i]);
 
-        float offset = (float)glyphOffset.x + 8.0f;
+        float offset = (float)glyphOffset.x + 10.0f;
         if (obj.text->outline) {
           offset += 4.0f;
         }
@@ -135,7 +135,7 @@ void UISystem::update(FrameInfo& frameInfo) {
   }
 }
 
-void UISystem::render(FrameInfo& frameInfo) {
+void TextSystem::render(FrameInfo& frameInfo) {
   pipeline->bind(frameInfo.commandBuffer);
 
   std::vector<VkDescriptorSet> descriptorSets{
@@ -166,7 +166,7 @@ void UISystem::render(FrameInfo& frameInfo) {
   }
 }
 
-glm::vec2 UISystem::getScreenCoordinates(
+glm::vec2 TextSystem::getScreenCoordinates(
     const VkExtent2D& swapChainExtent, const glm::vec2& topLeftOffset) {
   glm::vec2 trueCoords{};
 

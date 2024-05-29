@@ -6,7 +6,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/constants.hpp>
 
-#include "UISystem.h"
+#include "TextSystem.h"
 #include "allocator.h"
 #include "color.h"
 #include "descriptor.h"
@@ -91,7 +91,7 @@ void initTextImageDescriptor(Device& device, DescriptorInfo* descriptorInfo, Fon
   }
 }
 
-void updateTextUbo(UISystem& textSystem, DescriptorInfo* descriptorInfo, int frameIndex) {
+void updateTextUbo(TextSystem& textSystem, DescriptorInfo* descriptorInfo, int frameIndex) {
   descriptorInfo->textBuffers[frameIndex]->writeToBuffer(textSystem.getUbo());
   descriptorInfo->textBuffers[frameIndex]->flush();
 }
@@ -126,8 +126,8 @@ void addText(
   text.text->outline = outline;
   unsigned int textId = text.getId();
   std::vector<Model::Instance> instances{};
-  instances.resize(UISystem::MAX_TEXT_LENGTH);
-  text.text->position = UISystem::getScreenCoordinates(window->getExtent(), position);
+  instances.resize(TextSystem::MAX_TEXT_LENGTH);
+  text.text->position = TextSystem::getScreenCoordinates(window->getExtent(), position);
   std::shared_ptr<Model> model = Model::createModelFromTextData(
       *device,
       text.text->position,
@@ -170,7 +170,7 @@ int main() {
   std::string debugText = "pirmas blynas!";
   std::string fps = "0";
 
-  UISystem uiSystem{
+  TextSystem TextSystem{
       *device,
       *window,
       renderer->getSwapChainRenderPass(),
@@ -187,7 +187,7 @@ int main() {
       debugText,
       {0.0f, 15.0f},
       {255, 255, 255},
-      true,
+      false,
       {80, 20, 80});
 
   addText(
@@ -198,7 +198,7 @@ int main() {
       fps,
       {0.0f, 30.0f},
       {255, 255, 255},
-      true,
+      false,
       {80, 20, 80});
 
   while (!window->shouldClose()) {
@@ -222,16 +222,16 @@ int main() {
       debugText = "frame time: " + std::to_string(timer->getFrameTime());
       fps = "fps: " + std::to_string(timer->getFPS());
 
-      uiSystem.update(frameInfo);
+      TextSystem.update(frameInfo);
       // Copy Uniform data to GPU
       updateGlobalUbo(camera, &descriptorInfo, frameIndex);
-      updateTextUbo(uiSystem, &descriptorInfo, frameIndex);
+      updateTextUbo(TextSystem, &descriptorInfo, frameIndex);
 
       // RENDER LOOP
       // render calls should go in between render pass calls
       renderer->beginSwapChainRenderPass(commandBuffer);
 
-      uiSystem.render(frameInfo);
+      TextSystem.render(frameInfo);
 
       renderer->endSwapChainRenderPass(commandBuffer);
       renderer->endFrame();

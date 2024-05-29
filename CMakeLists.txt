@@ -28,8 +28,8 @@ set(SOURCES
         src/core/camera.h
         src/core/camera.cpp
         src/utils/hash.h
-        src/systems/UISystem.h
-        src/systems/UISystem.cpp
+        src/systems/TextSystem.h
+        src/systems/TextSystem.cpp
         src/core/renderInfo.h
         src/core/texture.h
         src/core/texture.cpp
