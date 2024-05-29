@@ -13,4 +13,5 @@ class TextComponent {
   std::string* text{};
   glm::vec3 outlineColor{};
   bool outline = false;
+  bool isVisible = true;
 };

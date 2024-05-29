@@ -4,6 +4,7 @@ layout(location = 0) in vec2 fragTexCoord;
 layout(location = 1) in vec3 fragTextColor;
 layout (location = 2) in float fragOutline;
 layout (location = 3) in vec3 fragOutlineColor;
+layout (location = 4) in float fragIsVisible;
 
 layout(set = 0, binding = 0) uniform TextUbo {
    vec3 color;
@@ -27,7 +28,7 @@ void main() {
     // }
 
     float distance = texture(texSampler, fragTexCoord).r;
-    if (distance < 0.15) {
+    if (distance < 0.15 || fragIsVisible != 1) {
         discard;
     }
     float smoothWidth = fwidth(distance);	

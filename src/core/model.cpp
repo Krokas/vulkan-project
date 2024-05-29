@@ -140,7 +140,8 @@ std::unique_ptr<Model> Model::createModelFromTextData(
     glm::vec3& color,
     glm::vec3& outlineColor,
     bool outline,
-    const std::vector<Instance>& instances) {
+    const std::vector<Instance>& instances,
+    bool isVisible) {
   std::vector<Vertex> vertices{};
 
   vertices.resize(6);
@@ -148,7 +149,7 @@ std::unique_ptr<Model> Model::createModelFromTextData(
     vertices[i].position = {position.x, 1.0f, position.y};
     vertices[i].color = color;
     vertices[i].normal = outlineColor;
-    vertices[i].uv = {outline ? 1.0f : 0.0f, 0.0f};
+    vertices[i].uv = {outline ? 1.0f : 0.0f, isVisible ? 1.0f : 0.0f};
   }
 
   Builder builder{};
@@ -228,7 +229,6 @@ std::vector<VkVertexInputAttributeDescription> Model::Vertex::getAttributeDescri
         {6, 1, VK_FORMAT_R32G32_SFLOAT, offsetof(Instance, textureSize)});
     attributeDescriptions.push_back(
         {7, 1, VK_FORMAT_R32G32_SFLOAT, offsetof(Instance, texturePos)});
-    attributeDescriptions.push_back({8, 1, VK_FORMAT_R32_UINT, offsetof(Instance, isVisible)});
   }
 
   return attributeDescriptions;

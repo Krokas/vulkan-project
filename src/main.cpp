@@ -12,6 +12,7 @@
 #include "descriptor.h"
 #include "device.h"
 #include "font.h"
+#include "input.h"
 #include "log.h"
 #include "renderInfo.h"
 #include "renderer.h"
@@ -149,6 +150,7 @@ int main() {
   static std::shared_ptr<Window> window;
   static std::shared_ptr<Device> device;
   static std::shared_ptr<Renderer> renderer;
+  static std::shared_ptr<Input> input;
   static std::shared_ptr<Timer> timer;
   static DescriptorInfo descriptorInfo{};
   descriptorInfo.uboBuffers.resize(SwapChain::MAX_FRAMES_IN_FLIGHT);
@@ -160,6 +162,7 @@ int main() {
   window = std::make_shared<Window>(WIDTH, HEIGHT, "Vulkan project");
   device = std::make_shared<Device>(*window);
   renderer = std::make_shared<Renderer>(*window, *device);
+  input = std::make_shared<Input>(window->getGlfwWindow());
   debugFont = std::make_shared<Font>(device.get(), &transiantStorage, ARIAL, 16);
   debugFont->prepare();
 
@@ -169,6 +172,8 @@ int main() {
 
   std::string debugText = "pirmas blynas!";
   std::string fps = "0";
+
+  std::string pressedTest = "";
 
   TextSystem TextSystem{
       *device,
@@ -201,6 +206,17 @@ int main() {
       false,
       {80, 20, 80});
 
+  addText(
+      debugFont,
+      window,
+      device,
+      &gameObjects,
+      pressedTest,
+      {100.0f, 100.0f},
+      {255, 255, 255},
+      true,
+      {255, 0, 0});
+
   while (!window->shouldClose()) {
     window->pollEvents();
 
@@ -222,6 +238,13 @@ int main() {
       debugText = "frame time: " + std::to_string(timer->getFrameTime());
       fps = "fps: " + std::to_string(timer->getFPS());
 
+      if (input->isKeyPressed(87)) {
+        pressedTest = (char)87;
+      } else {
+        pressedTest = "";
+      }
+
+      input->update();
       TextSystem.update(frameInfo);
       // Copy Uniform data to GPU
       updateGlobalUbo(camera, &descriptorInfo, frameIndex);

@@ -40,7 +40,9 @@ set(SOURCES
         src/utils/allocator.cpp
         src/utils/color.h
         src/utils/timer.h
-        src/utils/timer.cpp)
+        src/utils/timer.cpp
+        src/core/input.h
+        src/core/input.cpp)
 
 set(Vulkan_Project_SRC
         src/main.cpp

@@ -32,7 +32,6 @@ class Model {
     glm::vec3 size{};
     glm::vec2 textureSize{};
     glm::vec2 texturePos{};
-    bool isVisible = false;
   };
 
   struct Builder {
@@ -59,7 +58,8 @@ class Model {
       glm::vec3& color,
       glm::vec3& outlineColor,
       bool outline,
-      const std::vector<Instance>& instances);
+      const std::vector<Instance>& instances,
+      bool isVisible = true);
 
   void bind(VkCommandBuffer commandBuffer);
   void draw(VkCommandBuffer commandBuffer);

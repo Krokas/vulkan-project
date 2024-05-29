@@ -73,9 +73,6 @@ void TextSystem::update(FrameInfo& frameInfo) {
       std::vector<Model::Instance> instanceData{};
       instanceData.resize(MAX_TEXT_LENGTH);
       glm::vec2 startPos = obj.text->position;
-      for (int j = 0; j < MAX_TEXT_LENGTH; j++) {
-        instanceData[j].isVisible = false;
-      }
       std::string text = *obj.text->text;
       int textureWidth = obj.text->font->getTextureWidth();
 
@@ -117,11 +114,16 @@ void TextSystem::update(FrameInfo& frameInfo) {
             (float)glyphTexturePos.x / (float)textureWidth,
             (float)glyphTexturePos.y / (float)textureWidth};
 
-        instanceData[i].isVisible = true;
         instanceData[i].size = {
             (float)glyphSize.x * (float)screenToTexture.x / (float)frameInfo.windowExtent.width,
             (float)glyphSize.y * (float)screenToTexture.y / (float)frameInfo.windowExtent.height,
             0.0f};
+      }
+
+      if (obj.text->text->length() > 0) {
+        obj.text->isVisible = true;
+      } else {
+        obj.text->isVisible = false;
       }
 
       obj.model = Model::createModelFromTextData(
@@ -130,7 +132,22 @@ void TextSystem::update(FrameInfo& frameInfo) {
           obj.text->color,
           obj.text->outlineColor,
           obj.text->outline,
-          instanceData);
+          instanceData,
+          obj.text->isVisible);
+    }
+
+    if (obj.text->text->length() == 0 && obj.text->isVisible) {
+      obj.text->isVisible = false;
+      std::vector<Model::Instance> instanceData{};
+      instanceData.resize(1);
+      obj.model = Model::createModelFromTextData(
+          frameInfo.device,
+          obj.text->position,
+          obj.text->color,
+          obj.text->outlineColor,
+          obj.text->outline,
+          instanceData,
+          obj.text->isVisible);
     }
   }
 }

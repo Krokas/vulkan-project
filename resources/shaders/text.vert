@@ -9,13 +9,13 @@ layout(location = 4) in vec3 instancePos;
 layout(location = 5) in vec3 size;
 layout(location = 6) in vec2 textureSize;
 layout(location = 7) in vec2 textureCoords;
-layout(location = 8) in uint isVisible;
 
 
 layout (location = 0) out vec2 fragTextCoords;
 layout (location = 1) out vec3 fragTextColor;
 layout (location = 2) out float fragOutline;
 layout (location = 3) out vec3 fragOutlineColor;
+layout (location = 4) out float fragIsVisible;
 
 //vec2 size = vec2(0.1, 0.2);
 
@@ -51,4 +51,5 @@ void main() {
     fragTextColor = color;
     fragOutline = uv.x;
     fragOutlineColor = normal;
+    fragIsVisible = uv.y;
 }
