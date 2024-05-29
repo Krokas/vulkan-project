@@ -27,7 +27,6 @@ Font::Font(
   if (textureWidth < 512) {
     textureWidth = 512;
   }
-  R_TRACE("texture width is set to: %i", textureWidth)
 
   FT_Library fontLibrary;
   FT_Init_FreeType(&fontLibrary);

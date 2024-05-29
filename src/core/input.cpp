@@ -27,4 +27,8 @@ void Input::update() {
       it->second.isPressed = false;
     }
   }
+
+  double xpos, ypos;
+  glfwGetCursorPos(window, &xpos, &ypos);
+  mousePosition = {(float)xpos, (float)ypos};
 }

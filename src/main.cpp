@@ -108,7 +108,7 @@ void updateGlobalUbo(Camera& camera, DescriptorInfo* descriptorInfo, int frameIn
   descriptorInfo->uboBuffers[frameIndex]->flush();
 }
 
-void addText(
+unsigned int addText(
     std::shared_ptr<Font> font,
     std::shared_ptr<Window> window,
     std::shared_ptr<Device> device,
@@ -131,7 +131,7 @@ void addText(
   text.text->position = TextSystem::getScreenCoordinates(window->getExtent(), position);
   std::shared_ptr<Model> model = Model::createModelFromTextData(
       *device,
-      text.text->position,
+      &text.text->position,
       text.text->color,
       text.text->outlineColor,
       text.text->outline,
@@ -139,6 +139,7 @@ void addText(
 
   text.model = model;
   gameObjects->emplace(textId, std::move(text));
+  return textId;
 }
 
 int main() {
@@ -174,6 +175,7 @@ int main() {
   std::string fps = "0";
 
   std::string pressedTest = "";
+  std::string mousePosition = "";
 
   TextSystem TextSystem{
       *device,
@@ -217,6 +219,17 @@ int main() {
       true,
       {255, 0, 0});
 
+  auto mousePositionObjId = addText(
+      debugFont,
+      window,
+      device,
+      &gameObjects,
+      mousePosition,
+      {100, 100},
+      {80, 50, 200},
+      false,
+      {255, 255, 255});
+
   while (!window->shouldClose()) {
     window->pollEvents();
 
@@ -237,6 +250,12 @@ int main() {
 
       debugText = "frame time: " + std::to_string(timer->getFrameTime());
       fps = "fps: " + std::to_string(timer->getFPS());
+      mousePosition = std::to_string((int)input->getMousePosition().x) + ", " +
+                      std::to_string((int)input->getMousePosition().y);
+
+      gameObjects.at(mousePositionObjId).text->position = TextSystem::getScreenCoordinates(
+          window->getExtent(),
+          {input->getMousePosition().x + 5.0f, input->getMousePosition().y + 25.0f});
 
       if (input->isKeyPressed(87)) {
         pressedTest = (char)87;

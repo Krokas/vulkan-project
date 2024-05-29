@@ -128,7 +128,7 @@ void TextSystem::update(FrameInfo& frameInfo) {
 
       obj.model = Model::createModelFromTextData(
           frameInfo.device,
-          obj.text->position,
+          &obj.text->position,
           obj.text->color,
           obj.text->outlineColor,
           obj.text->outline,
@@ -142,7 +142,7 @@ void TextSystem::update(FrameInfo& frameInfo) {
       instanceData.resize(1);
       obj.model = Model::createModelFromTextData(
           frameInfo.device,
-          obj.text->position,
+          &obj.text->position,
           obj.text->color,
           obj.text->outlineColor,
           obj.text->outline,
