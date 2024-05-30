@@ -174,7 +174,10 @@ int main() {
   std::string debugText = "pirmas blynas!";
   std::string fps = "0";
 
-  std::string pressedTest = "";
+  std::string pressedTestW = "";
+  std::string pressedTestS = "";
+  std::string pressedTestD = "";
+  std::string pressedTestA = "";
   std::string mousePosition = "";
 
   TextSystem TextSystem{
@@ -213,8 +216,41 @@ int main() {
       window,
       device,
       &gameObjects,
-      pressedTest,
+      pressedTestW,
       {100.0f, 100.0f},
+      {255, 255, 255},
+      true,
+      {255, 0, 0});
+
+  addText(
+      debugFont,
+      window,
+      device,
+      &gameObjects,
+      pressedTestS,
+      {100.0f, 115.0f},
+      {255, 255, 255},
+      true,
+      {255, 0, 0});
+
+  addText(
+      debugFont,
+      window,
+      device,
+      &gameObjects,
+      pressedTestD,
+      {115.0f, 115.0f},
+      {255, 255, 255},
+      true,
+      {255, 0, 0});
+
+  addText(
+      debugFont,
+      window,
+      device,
+      &gameObjects,
+      pressedTestA,
+      {85.0f, 115.0f},
       {255, 255, 255},
       true,
       {255, 0, 0});
@@ -257,10 +293,28 @@ int main() {
           window->getExtent(),
           {input->getMousePosition().x + 5.0f, input->getMousePosition().y + 25.0f});
 
-      if (input->isKeyPressed(87)) {
-        pressedTest = (char)87;
+      if (input->isKeyPressed(FORWARD)) {
+        pressedTestW = "W";
       } else {
-        pressedTest = "";
+        pressedTestW = "";
+      }
+
+      if (input->isKeyPressed(BACKWARD)) {
+        pressedTestS = "S";
+      } else {
+        pressedTestS = "";
+      }
+
+      if (input->isKeyPressed(LEFT)) {
+        pressedTestA = "A";
+      } else {
+        pressedTestA = "";
+      }
+
+      if (input->isKeyPressed(RIGHT)) {
+        pressedTestD = "D";
+      } else {
+        pressedTestD = "";
       }
 
       input->update();
