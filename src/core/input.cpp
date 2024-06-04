@@ -32,13 +32,7 @@ void Input::update() {
   for (it = keyMap.begin(); it != keyMap.end(); it++) {
     std::map<int, InputData>::iterator keyIterator;
     for (keyIterator = it->second.begin(); keyIterator != it->second.end(); keyIterator++) {
-      if (glfwGetKey(window, keyIterator->first) == GLFW_PRESS) {
-        keyIterator->second.isPressed = true;
-      } else {
-        keyIterator->second.isPressed = false;
-      }
-
-      if (glfwGetMouseButton(window, keyIterator->first) == GLFW_PRESS) {
+      if (glfwGetKey(window, keyIterator->first) == GLFW_PRESS || glfwGetMouseButton(window, keyIterator->first) == GLFW_PRESS) {
         keyIterator->second.isPressed = true;
       } else {
         keyIterator->second.isPressed = false;
