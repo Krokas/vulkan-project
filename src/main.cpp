@@ -9,6 +9,7 @@
 #include "TextSystem.h"
 #include "UISystem.h"
 #include "allocator.h"
+#include "collision.h"
 #include "color.h"
 #include "descriptor.h"
 #include "device.h"
@@ -197,12 +198,11 @@ int main() {
 
   GameObject button = GameObject::createGameObject();
   button.ui = std::make_unique<UIComponent>();
-  button.model = Model::createQuad(
-      *device,
-      TextSystem::getScreenCoordinates(window->getExtent(), {100, 50}),
-      TextSystem::getScreenScreenSize(window->getExtent(), {75, 30}),
-      hexColorToUnitary({150, 255, 100}));
-  gameObjects.emplace(button.getId(), std::move(button));
+  button.ui->position = TextSystem::getScreenCoordinates(window->getExtent(), {100, 50});
+  button.ui->size = TextSystem::getScreenScreenSize(window->getExtent(), {75, 30});
+  button.ui->color = hexColorToUnitary({150, 255, 100});
+  unsigned int buttonId = button.getId();
+  gameObjects.emplace(buttonId, std::move(button));
 
   while (!window->shouldClose()) {
     window->pollEvents();
@@ -251,6 +251,22 @@ int main() {
         pressedTestD = "D";
       } else {
         pressedTestD = "";
+      }
+
+      glm::ivec2 buttonPixelPosition = TextSystem::getPixelPosition(window->getExtent(), gameObjects.at(buttonId).ui->position);
+      glm::ivec2 buttonPixelPositionPlusSize = TextSystem::getPixelPosition(
+          window->getExtent(),
+          {
+              gameObjects.at(buttonId).ui->position.x + gameObjects.at(buttonId).ui->size.x,
+              gameObjects.at(buttonId).ui->position.y + gameObjects.at(buttonId).ui->size.y,
+          });
+
+      glm::vec4 buttonBB = {buttonPixelPosition.x, buttonPixelPositionPlusSize.x, buttonPixelPosition.y, buttonPixelPositionPlusSize.y};
+
+      if (Collision::AABB(buttonBB, input->getMousePosition())) {
+        gameObjects.at(buttonId).ui->color = hexColorToUnitary({255, 205, 50});
+      } else {
+        gameObjects.at(buttonId).ui->color = hexColorToUnitary({150, 255, 100});
       }
 
       input->update();

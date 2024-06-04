@@ -188,3 +188,12 @@ glm::vec2 TextSystem::getScreenScreenSize(const VkExtent2D& swapChainExtent, con
 
   return screenSize;
 }
+
+glm::ivec2 TextSystem::getPixelPosition(const VkExtent2D& swapchainExtent, const glm::vec2& windowPosition) {
+  glm::ivec2 pixelPosition{};
+
+  pixelPosition.x = ((windowPosition.x + 1.0f) / 2.0f) * swapchainExtent.width;
+  pixelPosition.y = ((windowPosition.y + 1.0f) / 2.0f) * swapchainExtent.height;
+
+  return pixelPosition;
+}

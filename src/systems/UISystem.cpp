@@ -73,6 +73,7 @@ void UISystem::update(FrameInfo& frameInfo) {
   for (auto& kv : frameInfo.gameObjects) {
     auto& obj = kv.second;
     if (obj.ui == nullptr) continue;
-    if (obj.model == nullptr) continue;
+
+    obj.model = Model::createQuad(frameInfo.device, obj.ui->position, obj.ui->size, obj.ui->color);
   }
 }

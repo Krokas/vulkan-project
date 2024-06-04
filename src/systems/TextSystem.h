@@ -34,6 +34,7 @@ class TextSystem {
   void render(FrameInfo& frameInfo);
   static glm::vec2 getScreenCoordinates(const VkExtent2D& swapChainExtent, const glm::vec2& topLeftOffset);
   static glm::vec2 getScreenScreenSize(const VkExtent2D& swapChainExtent, const glm::vec2& pixelSize);
+  static glm::ivec2 getPixelPosition(const VkExtent2D& swapchainExtent, const glm::vec2& windowPosition);
   void updateText(unsigned int objectId, const std::string& text);
 
  private:

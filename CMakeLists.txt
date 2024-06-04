@@ -45,7 +45,9 @@ set(SOURCES
         src/core/input.cpp
         src/systems/UISystem.h
         src/systems/UISystem.cpp
-        src/core/components/UIComponent.h)
+        src/core/components/UIComponent.h
+        src/utils/collision.h
+        src/utils/collision.cpp)
 
 set(Vulkan_Project_SRC
         src/main.cpp
