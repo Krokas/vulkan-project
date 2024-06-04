@@ -12,11 +12,7 @@
 #include "font.h"
 
 TextSystem::TextSystem(
-    Device& device,
-    Window& window,
-    VkRenderPass renderPass,
-    VkDescriptorSetLayout globalSetLayout,
-    DescriptorInfo* descriptorInfo)
+    Device& device, Window& window, VkRenderPass renderPass, VkDescriptorSetLayout globalSetLayout, DescriptorInfo* descriptorInfo)
     : device{device}, window{window}, descriptorInfo{descriptorInfo} {
   createPipelineLayout(globalSetLayout);
   createPipeline(renderPass);
@@ -39,8 +35,7 @@ void TextSystem::createPipelineLayout(VkDescriptorSetLayout globalSetLayout) {
   layoutInfo.pushConstantRangeCount = 0;
   layoutInfo.pPushConstantRanges = nullptr;
 
-  if (vkCreatePipelineLayout(device.device(), &layoutInfo, nullptr, &pipelineLayout) !=
-      VK_SUCCESS) {
+  if (vkCreatePipelineLayout(device.device(), &layoutInfo, nullptr, &pipelineLayout) != VK_SUCCESS) {
     throw std::runtime_error("Failed to create pipeline layout!");
   }
 }
@@ -98,21 +93,15 @@ void TextSystem::update(FrameInfo& frameInfo) {
         }
 
         instanceData[i].position = {
-            ((float)nextPosition.x + offset) * (float)screenToTexture.x /
-                (float)frameInfo.windowExtent.width,
-            ((float)nextPosition.y - (float)glyphOffset.y) * (float)screenToTexture.y /
-                (float)frameInfo.windowExtent.height,
+            ((float)nextPosition.x + offset) * (float)screenToTexture.x / (float)frameInfo.windowExtent.width,
+            ((float)nextPosition.y - (float)glyphOffset.y) * (float)screenToTexture.y / (float)frameInfo.windowExtent.height,
             0.0f};
 
         nextPosition += glm::vec2((float)glyphAdvance.x + offset, (float)glyphAdvance.y);
 
-        instanceData[i].textureSize = {
-            (float)glyphSize.x / (float)textureWidth,
-            (float)glyphSize.y / (float)textureWidth};
+        instanceData[i].textureSize = {(float)glyphSize.x / (float)textureWidth, (float)glyphSize.y / (float)textureWidth};
 
-        instanceData[i].texturePos = {
-            (float)glyphTexturePos.x / (float)textureWidth,
-            (float)glyphTexturePos.y / (float)textureWidth};
+        instanceData[i].texturePos = {(float)glyphTexturePos.x / (float)textureWidth, (float)glyphTexturePos.y / (float)textureWidth};
 
         instanceData[i].size = {
             (float)glyphSize.x * (float)screenToTexture.x / (float)frameInfo.windowExtent.width,
@@ -155,8 +144,7 @@ void TextSystem::update(FrameInfo& frameInfo) {
 void TextSystem::render(FrameInfo& frameInfo) {
   pipeline->bind(frameInfo.commandBuffer);
 
-  std::vector<VkDescriptorSet> descriptorSets{
-      descriptorInfo->textDescriptorSets[frameInfo.frameIndex]};
+  std::vector<VkDescriptorSet> descriptorSets{descriptorInfo->textDescriptorSets[frameInfo.frameIndex]};
 
   vkCmdBindDescriptorSets(
       frameInfo.commandBuffer,
@@ -183,12 +171,20 @@ void TextSystem::render(FrameInfo& frameInfo) {
   }
 }
 
-glm::vec2 TextSystem::getScreenCoordinates(
-    const VkExtent2D& swapChainExtent, const glm::vec2& topLeftOffset) {
+glm::vec2 TextSystem::getScreenCoordinates(const VkExtent2D& swapChainExtent, const glm::vec2& topLeftOffset) {
   glm::vec2 trueCoords{};
 
   trueCoords.x = ((topLeftOffset.x * 2.0f) / swapChainExtent.width) - 1.0f;
   trueCoords.y = ((topLeftOffset.y * 2.0f) / swapChainExtent.height) - 1.0f;
 
   return trueCoords;
+}
+
+glm::vec2 TextSystem::getScreenScreenSize(const VkExtent2D& swapChainExtent, const glm::vec2& pixelSize) {
+  glm::vec2 screenSize{};
+
+  screenSize.x = (pixelSize.x * 2.0f) / swapChainExtent.width;
+  screenSize.y = (pixelSize.y * 2.0f) / swapChainExtent.height;
+
+  return screenSize;
 }

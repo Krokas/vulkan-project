@@ -1,12 +1,11 @@
 #pragma once
-#include "buffer.h"
-#include "device.h"
-
-#define GLM_FORCE_RADIANS
-#define GLM_FORCE_DEPTH_ZERO_TO_ONE
-#include <glm/glm.hpp>
+#include <glm/vec2.hpp>
+#include <glm/vec3.hpp>
 #include <memory>
 #include <vector>
+
+#include "buffer.h"
+#include "device.h"
 
 class Model {
  public:
@@ -16,14 +15,11 @@ class Model {
     glm::vec3 normal{};
     glm::vec2 uv{};
 
-    static std::vector<VkVertexInputBindingDescription> getBindingDescriptions(
-        bool isInstanced = false);
-    static std::vector<VkVertexInputAttributeDescription> getAttributeDescriptions(
-        bool isInstanced = false);
+    static std::vector<VkVertexInputBindingDescription> getBindingDescriptions(bool isInstanced = false);
+    static std::vector<VkVertexInputAttributeDescription> getAttributeDescriptions(bool isInstanced = false);
 
     bool operator==(const Vertex& other) const {
-      return position == other.position && color == other.color && normal == other.normal &&
-             uv == other.uv;
+      return position == other.position && color == other.color && normal == other.normal && uv == other.uv;
     }
   };
 
@@ -50,8 +46,7 @@ class Model {
   Model& operator=(const Model&) = delete;
 
   static std::unique_ptr<Model> createModelFromFile(Device& device, const std::string& filename);
-  static std::unique_ptr<Model> createFromData(
-      Device& device, const std::vector<Vertex>& vertices, const std::vector<uint32_t>& indices);
+  static std::unique_ptr<Model> createFromData(Device& device, const std::vector<Vertex>& vertices, const std::vector<uint32_t>& indices);
   static std::unique_ptr<Model> createModelFromTextData(
       Device& device,
       glm::vec2* position,
@@ -60,6 +55,7 @@ class Model {
       bool outline,
       const std::vector<Instance>& instances,
       bool isVisible = true);
+  static std::unique_ptr<Model> createQuad(Device& device, const glm::vec2& position, const glm::vec2& size, const glm::vec3 color);
 
   void bind(VkCommandBuffer commandBuffer);
   void draw(VkCommandBuffer commandBuffer);

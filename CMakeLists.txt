@@ -42,7 +42,10 @@ set(SOURCES
         src/utils/timer.h
         src/utils/timer.cpp
         src/core/input.h
-        src/core/input.cpp)
+        src/core/input.cpp
+        src/systems/UISystem.h
+        src/systems/UISystem.cpp
+        src/core/components/UIComponent.h)
 
 set(Vulkan_Project_SRC
         src/main.cpp
@@ -50,7 +53,9 @@ set(Vulkan_Project_SRC
 
 set(COMPILED_SHADERS 
         ${CMAKE_CURRENT_SOURCE_DIR}/resources/shaders/text_vert.spv
-        ${CMAKE_CURRENT_SOURCE_DIR}/resources/shaders/text_frag.spv)
+        ${CMAKE_CURRENT_SOURCE_DIR}/resources/shaders/text_frag.spv 
+        ${CMAKE_CURRENT_SOURCE_DIR}/resources/shaders/ui_vert.spv
+        ${CMAKE_CURRENT_SOURCE_DIR}/resources/shaders/ui_frag.spv)
 
 add_compile_options(-Wno-writable-strings -Wno-format-security)
 add_executable(${Project_name} ${Vulkan_Project_SRC} ${COMPILED_SHADERS})
@@ -98,6 +103,21 @@ add_custom_command(
                     -o ${CMAKE_CURRENT_SOURCE_DIR}/resources/shaders/text_frag.spv
   DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/resources/shaders/text.frag
   VERBATIM)
+
+
+add_custom_command(
+        OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/resources/shaders/ui_vert.spv
+        COMMAND $ENV{VULKAN_SDK_PATH}/Bin/glslc ${CMAKE_CURRENT_SOURCE_DIR}/resources/shaders/ui.vert
+                        -o ${CMAKE_CURRENT_SOURCE_DIR}/resources/shaders/ui_vert.spv
+        DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/resources/shaders/ui.vert
+        VERBATIM)
+
+add_custom_command(
+        OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/resources/shaders/ui_frag.spv
+        COMMAND $ENV{VULKAN_SDK_PATH}/Bin/glslc ${CMAKE_CURRENT_SOURCE_DIR}/resources/shaders/ui.frag
+                        -o ${CMAKE_CURRENT_SOURCE_DIR}/resources/shaders/ui_frag.spv
+        DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/resources/shaders/ui.frag
+        VERBATIM)
 else()
 message(FATAL_ERROR "VULKAN_SDK_PATH Environment variable is missing!")
 endif()

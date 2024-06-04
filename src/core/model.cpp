@@ -24,8 +24,7 @@ struct hash<Model::Vertex> {
 };
 }  // namespace std
 
-Model::Model(Device& device, const Model::Builder& builder)
-    : device{device}, isInstanced{builder.isInstanced} {
+Model::Model(Device& device, const Model::Builder& builder) : device{device}, isInstanced{builder.isInstanced} {
   createVertexBuffers(builder.vertices);
   createIndexBuffers(builder.indices);
   if (isInstanced) {
@@ -126,8 +125,7 @@ std::unique_ptr<Model> Model::createModelFromFile(Device& device, const std::str
   return std::make_unique<Model>(device, builder);
 }
 
-std::unique_ptr<Model> Model::createFromData(
-    Device& device, const std::vector<Vertex>& vertices, const std::vector<uint32_t>& indices) {
+std::unique_ptr<Model> Model::createFromData(Device& device, const std::vector<Vertex>& vertices, const std::vector<uint32_t>& indices) {
   Builder builder{};
   builder.vertices = vertices;
   builder.indices = indices;
@@ -159,6 +157,22 @@ std::unique_ptr<Model> Model::createModelFromTextData(
   return std::make_unique<Model>(device, builder);
 }
 
+std::unique_ptr<Model> Model::createQuad(Device& device, const glm::vec2& position, const glm::vec2& size, const glm::vec3 color) {
+  std::vector<Vertex> vertices{};
+
+  vertices.resize(6);
+  for (int i = 0; i < vertices.size(); i++) {
+    vertices[i].position = {position.x, 1.0f, position.y};
+    vertices[i].color = color;
+    vertices[i].normal = glm::vec3(1.0f);
+    vertices[i].uv = size;
+  }
+
+  Builder builder{};
+  builder.vertices = vertices;
+  return std::make_unique<Model>(device, builder);
+}
+
 void Model::draw(VkCommandBuffer commandBuffer) {
   if (hasIndexBuffer) {
     vkCmdDrawIndexed(commandBuffer, indexCount, 1, 0, 0, 0);
@@ -173,13 +187,14 @@ void Model::drawInstanced(VkCommandBuffer commandBuffer) {
   }
 }
 
-void Model::drawInstanced(VkCommandBuffer commandBuffer, int instanceCount) {
-  vkCmdDraw(commandBuffer, vertexCount, instanceCount, 0, 0);
-}
+void Model::drawInstanced(VkCommandBuffer commandBuffer, int instanceCount) { vkCmdDraw(commandBuffer, vertexCount, instanceCount, 0, 0); }
 
 void Model::bind(VkCommandBuffer commandBuffer) {
+  VkBuffer instanceBuffers[] = {};
   VkBuffer buffers[] = {vertexBuffer->getBuffer()};
-  VkBuffer instanceBuffers[] = {instanceBuffer->getBuffer()};
+  if (isInstanced) {
+    instanceBuffers[0] = {instanceBuffer->getBuffer()};
+  }
   VkDeviceSize offsets[] = {0};
   vkCmdBindVertexBuffers(commandBuffer, 0, 1, buffers, offsets);
 
@@ -192,8 +207,7 @@ void Model::bind(VkCommandBuffer commandBuffer) {
   }
 }
 
-std::vector<VkVertexInputBindingDescription> Model::Vertex::getBindingDescriptions(
-    bool isInstanced) {
+std::vector<VkVertexInputBindingDescription> Model::Vertex::getBindingDescriptions(bool isInstanced) {
   unsigned int bindingDescriptionCount = 1;
   if (isInstanced) {
     bindingDescriptionCount = 2;
@@ -212,8 +226,7 @@ std::vector<VkVertexInputBindingDescription> Model::Vertex::getBindingDescriptio
   return bindingDescriptions;
 }
 
-std::vector<VkVertexInputAttributeDescription> Model::Vertex::getAttributeDescriptions(
-    bool isInstanced) {
+std::vector<VkVertexInputAttributeDescription> Model::Vertex::getAttributeDescriptions(bool isInstanced) {
   std::vector<VkVertexInputAttributeDescription> attributeDescriptions{};
 
   attributeDescriptions.push_back({0, 0, VK_FORMAT_R32G32B32_SFLOAT, offsetof(Vertex, position)});
@@ -222,13 +235,10 @@ std::vector<VkVertexInputAttributeDescription> Model::Vertex::getAttributeDescri
   attributeDescriptions.push_back({3, 0, VK_FORMAT_R32G32_SFLOAT, offsetof(Vertex, uv)});
 
   if (isInstanced) {
-    attributeDescriptions.push_back(
-        {4, 1, VK_FORMAT_R32G32B32_SFLOAT, offsetof(Instance, position)});
+    attributeDescriptions.push_back({4, 1, VK_FORMAT_R32G32B32_SFLOAT, offsetof(Instance, position)});
     attributeDescriptions.push_back({5, 1, VK_FORMAT_R32G32B32_SFLOAT, offsetof(Instance, size)});
-    attributeDescriptions.push_back(
-        {6, 1, VK_FORMAT_R32G32_SFLOAT, offsetof(Instance, textureSize)});
-    attributeDescriptions.push_back(
-        {7, 1, VK_FORMAT_R32G32_SFLOAT, offsetof(Instance, texturePos)});
+    attributeDescriptions.push_back({6, 1, VK_FORMAT_R32G32_SFLOAT, offsetof(Instance, textureSize)});
+    attributeDescriptions.push_back({7, 1, VK_FORMAT_R32G32_SFLOAT, offsetof(Instance, texturePos)});
   }
 
   return attributeDescriptions;
@@ -274,9 +284,7 @@ void Model::Builder::loadModel(const std::string& filename) {
       }
 
       if (index.texcoord_index >= 0) {
-        vertex.uv = {
-            attrib.texcoords[2 * index.texcoord_index + 0],
-            attrib.texcoords[2 * index.texcoord_index + 1]};
+        vertex.uv = {attrib.texcoords[2 * index.texcoord_index + 0], attrib.texcoords[2 * index.texcoord_index + 1]};
       }
 
       if (uniqueVertices.count(vertex) == 0) {

@@ -7,6 +7,7 @@
 #include <glm/gtc/constants.hpp>
 
 #include "TextSystem.h"
+#include "UISystem.h"
 #include "allocator.h"
 #include "color.h"
 #include "descriptor.h"
@@ -22,13 +23,12 @@
 #include "window.h"
 
 void initGlobalPool(Device& device, DescriptorInfo* descriptorInfo) {
-  descriptorInfo->globalPool =
-      DescriptorPool::Builder(device)
-          .setMaxSets((uint32_t)(SwapChain::MAX_FRAMES_IN_FLIGHT * 4))
-          .addPoolSize(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, SwapChain::MAX_FRAMES_IN_FLIGHT)
-          .addPoolSize(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, SwapChain::MAX_FRAMES_IN_FLIGHT)
-          .addPoolSize(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, SwapChain::MAX_FRAMES_IN_FLIGHT)
-          .build();
+  descriptorInfo->globalPool = DescriptorPool::Builder(device)
+                                   .setMaxSets((uint32_t)(SwapChain::MAX_FRAMES_IN_FLIGHT * 4))
+                                   .addPoolSize(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, SwapChain::MAX_FRAMES_IN_FLIGHT)
+                                   .addPoolSize(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, SwapChain::MAX_FRAMES_IN_FLIGHT)
+                                   .addPoolSize(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, SwapChain::MAX_FRAMES_IN_FLIGHT)
+                                   .build();
 }
 
 void initGlobalDescriptors(Device& device, DescriptorInfo* descriptorInfo) {
@@ -36,20 +36,14 @@ void initGlobalDescriptors(Device& device, DescriptorInfo* descriptorInfo) {
   descriptorInfo->uboBuffers.resize(SwapChain::MAX_FRAMES_IN_FLIGHT);
 
   for (int i = 0; i < descriptorInfo->uboBuffers.size(); i++) {
-    descriptorInfo->uboBuffers[i] = std::make_unique<Buffer>(
-        device,
-        sizeof(GlobalUbo),
-        1,
-        VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
-        VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
+    descriptorInfo->uboBuffers[i] =
+        std::make_unique<Buffer>(device, sizeof(GlobalUbo), 1, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
 
     descriptorInfo->uboBuffers[i]->map();
   }
 
   descriptorInfo->globalSetLayout =
-      DescriptorSetLayout::Builder(device)
-          .addBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_ALL_GRAPHICS)
-          .build();
+      DescriptorSetLayout::Builder(device).addBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_ALL_GRAPHICS).build();
 
   for (int i = 0; i < descriptorInfo->globalDescriptorSets.size(); i++) {
     auto bufferInfo = descriptorInfo->uboBuffers[i]->descriptorInfo();
@@ -63,21 +57,16 @@ void initTextImageDescriptor(Device& device, DescriptorInfo* descriptorInfo, Fon
   descriptorInfo->textBuffers.resize(SwapChain::MAX_FRAMES_IN_FLIGHT);
   descriptorInfo->textDescriptorSets.resize(SwapChain::MAX_FRAMES_IN_FLIGHT);
   for (int i = 0; i < descriptorInfo->textBuffers.size(); i++) {
-    descriptorInfo->textBuffers[i] = std::make_unique<Buffer>(
-        device,
-        sizeof(TextUbo),
-        1,
-        VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
-        VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
+    descriptorInfo->textBuffers[i] =
+        std::make_unique<Buffer>(device, sizeof(TextUbo), 1, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
 
     descriptorInfo->textBuffers[i]->map();
   }
 
-  descriptorInfo->textSetLayout =
-      DescriptorSetLayout::Builder(device)
-          .addBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_ALL_GRAPHICS)
-          .addBinding(1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT)
-          .build();
+  descriptorInfo->textSetLayout = DescriptorSetLayout::Builder(device)
+                                      .addBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_ALL_GRAPHICS)
+                                      .addBinding(1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT)
+                                      .build();
 
   for (int i = 0; i < descriptorInfo->textDescriptorSets.size(); i++) {
     auto bufferInfo = descriptorInfo->textBuffers[i]->descriptorInfo();
@@ -187,84 +176,33 @@ int main() {
       descriptorInfo.textSetLayout->getDescriptorSetLayout(),
       &descriptorInfo};
 
+  UISystem uiSystem{
+      *device,
+      *window,
+      renderer->getSwapChainRenderPass(),
+      descriptorInfo.globalSetLayout->getDescriptorSetLayout(),
+      &descriptorInfo};
+
   timer = std::make_shared<Timer>();
 
-  addText(
-      debugFont,
-      window,
-      device,
-      &gameObjects,
-      debugText,
-      {0.0f, 15.0f},
-      {255, 255, 255},
-      false,
-      {80, 20, 80});
+  addText(debugFont, window, device, &gameObjects, debugText, {0.0f, 15.0f}, {255, 255, 255}, false, {80, 20, 80});
+  addText(debugFont, window, device, &gameObjects, fps, {0.0f, 30.0f}, {255, 255, 255}, false, {80, 20, 80});
+  addText(debugFont, window, device, &gameObjects, pressedTestW, {100.0f, 100.0f}, {255, 255, 255}, true, {255, 0, 0});
+  addText(debugFont, window, device, &gameObjects, pressedTestS, {100.0f, 115.0f}, {255, 255, 255}, true, {255, 0, 0});
+  addText(debugFont, window, device, &gameObjects, pressedTestD, {115.0f, 115.0f}, {255, 255, 255}, true, {255, 0, 0});
+  addText(debugFont, window, device, &gameObjects, pressedTestA, {85.0f, 115.0f}, {255, 255, 255}, true, {255, 0, 0});
 
-  addText(
-      debugFont,
-      window,
-      device,
-      &gameObjects,
-      fps,
-      {0.0f, 30.0f},
-      {255, 255, 255},
-      false,
-      {80, 20, 80});
+  auto mousePositionObjId =
+      addText(debugFont, window, device, &gameObjects, mousePosition, {100, 100}, {80, 50, 200}, false, {255, 255, 255});
 
-  addText(
-      debugFont,
-      window,
-      device,
-      &gameObjects,
-      pressedTestW,
-      {100.0f, 100.0f},
-      {255, 255, 255},
-      true,
-      {255, 0, 0});
-
-  addText(
-      debugFont,
-      window,
-      device,
-      &gameObjects,
-      pressedTestS,
-      {100.0f, 115.0f},
-      {255, 255, 255},
-      true,
-      {255, 0, 0});
-
-  addText(
-      debugFont,
-      window,
-      device,
-      &gameObjects,
-      pressedTestD,
-      {115.0f, 115.0f},
-      {255, 255, 255},
-      true,
-      {255, 0, 0});
-
-  addText(
-      debugFont,
-      window,
-      device,
-      &gameObjects,
-      pressedTestA,
-      {85.0f, 115.0f},
-      {255, 255, 255},
-      true,
-      {255, 0, 0});
-
-  auto mousePositionObjId = addText(
-      debugFont,
-      window,
-      device,
-      &gameObjects,
-      mousePosition,
-      {100, 100},
-      {80, 50, 200},
-      false,
-      {255, 255, 255});
+  GameObject button = GameObject::createGameObject();
+  button.ui = std::make_unique<UIComponent>();
+  button.model = Model::createQuad(
+      *device,
+      TextSystem::getScreenCoordinates(window->getExtent(), {100, 50}),
+      TextSystem::getScreenScreenSize(window->getExtent(), {75, 30}),
+      hexColorToUnitary({150, 255, 100}));
+  gameObjects.emplace(button.getId(), std::move(button));
 
   while (!window->shouldClose()) {
     window->pollEvents();
@@ -286,12 +224,10 @@ int main() {
 
       debugText = "frame time: " + std::to_string(timer->getFrameTime());
       fps = "fps: " + std::to_string(timer->getFPS());
-      mousePosition = std::to_string((int)input->getMousePosition().x) + ", " +
-                      std::to_string((int)input->getMousePosition().y);
+      mousePosition = std::to_string((int)input->getMousePosition().x) + ", " + std::to_string((int)input->getMousePosition().y);
 
-      gameObjects.at(mousePositionObjId).text->position = TextSystem::getScreenCoordinates(
-          window->getExtent(),
-          {input->getMousePosition().x + 5.0f, input->getMousePosition().y + 25.0f});
+      gameObjects.at(mousePositionObjId).text->position =
+          TextSystem::getScreenCoordinates(window->getExtent(), {input->getMousePosition().x + 5.0f, input->getMousePosition().y + 25.0f});
 
       if (input->isKeyPressed(FORWARD)) {
         pressedTestW = "W";
@@ -319,6 +255,7 @@ int main() {
 
       input->update();
       TextSystem.update(frameInfo);
+      uiSystem.update(frameInfo);
       // Copy Uniform data to GPU
       updateGlobalUbo(camera, &descriptorInfo, frameIndex);
       updateTextUbo(TextSystem, &descriptorInfo, frameIndex);
@@ -328,6 +265,7 @@ int main() {
       renderer->beginSwapChainRenderPass(commandBuffer);
 
       TextSystem.render(frameInfo);
+      uiSystem.render(frameInfo);
 
       renderer->endSwapChainRenderPass(commandBuffer);
       renderer->endFrame();

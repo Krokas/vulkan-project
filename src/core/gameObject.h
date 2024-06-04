@@ -5,6 +5,7 @@
 #include <unordered_map>
 
 // #include "MovementComponent.h"
+#include "UIComponent.h"
 #include "font.h"
 #include "model.h"
 #include "textComponent.h"
@@ -44,8 +45,7 @@ class GameObject {
     return GameObject{currentId++};
   }
 
-  static GameObject makePointLight(
-      float intensity = 10.0f, float radius = 0.1f, glm::vec3 color = glm::vec3(1.f));
+  static GameObject makePointLight(float intensity = 10.0f, float radius = 0.1f, glm::vec3 color = glm::vec3(1.f));
   static GameObject makeTerrain();
   static GameObject makePlayer();
   static GameObject makeText(std::shared_ptr<Font> font);
@@ -67,6 +67,7 @@ class GameObject {
   std::unique_ptr<PlayerComponent> player = nullptr;
   //   std::unique_ptr<MovementComponent> movement = nullptr;
   std::unique_ptr<TextComponent> text = nullptr;
+  std::unique_ptr<UIComponent> ui = nullptr;
 
  private:
   GameObject(id_t id) : id{id} {}

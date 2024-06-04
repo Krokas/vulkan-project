@@ -23,11 +23,7 @@ class TextSystem {
   using Map = std::unordered_map<std::string, Font>;
 
   TextSystem(
-      Device& device,
-      Window& window,
-      VkRenderPass renderPass,
-      VkDescriptorSetLayout globalSetLayout,
-      DescriptorInfo* descriptorInfo);
+      Device& device, Window& window, VkRenderPass renderPass, VkDescriptorSetLayout globalSetLayout, DescriptorInfo* descriptorInfo);
   ~TextSystem();
 
   TextSystem(const TextSystem&) = delete;
@@ -36,8 +32,8 @@ class TextSystem {
   TextUbo* getUbo() { return &ubo; }
   void update(FrameInfo& frameInfo);
   void render(FrameInfo& frameInfo);
-  static glm::vec2 getScreenCoordinates(
-      const VkExtent2D& swapChainExtent, const glm::vec2& topLeftOffset);
+  static glm::vec2 getScreenCoordinates(const VkExtent2D& swapChainExtent, const glm::vec2& topLeftOffset);
+  static glm::vec2 getScreenScreenSize(const VkExtent2D& swapChainExtent, const glm::vec2& pixelSize);
   void updateText(unsigned int objectId, const std::string& text);
 
  private:
