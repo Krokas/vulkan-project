@@ -263,10 +263,16 @@ int main() {
 
       glm::vec4 buttonBB = {buttonPixelPosition.x, buttonPixelPositionPlusSize.x, buttonPixelPosition.y, buttonPixelPositionPlusSize.y};
 
-      if (Collision::AABB(buttonBB, input->getMousePosition())) {
+      bool isButtonHovered = Collision::AABB(buttonBB, input->getMousePosition());
+
+      if (isButtonHovered) {
         gameObjects.at(buttonId).ui->color = hexColorToUnitary({255, 205, 50});
       } else {
         gameObjects.at(buttonId).ui->color = hexColorToUnitary({150, 255, 100});
+      }
+
+      if (isButtonHovered && input->isKeyPressed(SELECT)) {
+        R_TRACE("button click")
       }
 
       input->update();

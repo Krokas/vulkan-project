@@ -9,7 +9,7 @@ struct InputData {
   bool isPressed;
 };
 
-enum Actions { FORWARD, BACKWARD, LEFT, RIGHT };
+enum Actions { FORWARD, BACKWARD, LEFT, RIGHT, SELECT };
 
 class Input {
  public:

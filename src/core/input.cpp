@@ -15,6 +15,8 @@ Input::Input(GLFWwindow* window) : window{window} {
   addKeyBinding(BACKWARD, GLFW_KEY_DOWN);
   addKeyBinding(LEFT, GLFW_KEY_LEFT);
   addKeyBinding(RIGHT, GLFW_KEY_RIGHT);
+
+  addKeyBinding(SELECT, GLFW_MOUSE_BUTTON_LEFT);
 }
 
 void Input::scrollCallback(GLFWwindow* window, double xoffset, double yoffset) {
@@ -31,6 +33,12 @@ void Input::update() {
     std::map<int, InputData>::iterator keyIterator;
     for (keyIterator = it->second.begin(); keyIterator != it->second.end(); keyIterator++) {
       if (glfwGetKey(window, keyIterator->first) == GLFW_PRESS) {
+        keyIterator->second.isPressed = true;
+      } else {
+        keyIterator->second.isPressed = false;
+      }
+
+      if (glfwGetMouseButton(window, keyIterator->first) == GLFW_PRESS) {
         keyIterator->second.isPressed = true;
       } else {
         keyIterator->second.isPressed = false;
