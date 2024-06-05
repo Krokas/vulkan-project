@@ -271,7 +271,7 @@ int main() {
         gameObjects.at(buttonId).ui->color = hexColorToUnitary({150, 255, 100});
       }
 
-      if (isButtonHovered && input->isKeyPressed(SELECT)) {
+      if (isButtonHovered && input->isKeyReleased(SELECT)) {
         R_TRACE("button click")
       }
 

@@ -35,6 +35,11 @@ void Input::update() {
       if (glfwGetKey(window, keyIterator->first) == GLFW_PRESS || glfwGetMouseButton(window, keyIterator->first) == GLFW_PRESS) {
         keyIterator->second.isPressed = true;
       } else {
+        if (keyIterator->second.isPressed) {
+          keyIterator->second.isReleased = true;
+        } else {
+          keyIterator->second.isReleased = false;
+        }
         keyIterator->second.isPressed = false;
       }
     }
@@ -49,6 +54,16 @@ bool Input::isKeyPressed(Actions key) {
   std::map<int, InputData>::iterator it;
   for (it = keyMap[key].begin(); it != keyMap[key].end(); it++) {
     if (it->second.isPressed) {
+      return true;
+    }
+  }
+  return false;
+}
+
+bool Input::isKeyReleased(Actions key) {
+  std::map<int, InputData>::iterator it;
+  for (it = keyMap[key].begin(); it != keyMap[key].end(); it++) {
+    if (it->second.isReleased) {
       return true;
     }
   }

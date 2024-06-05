@@ -7,6 +7,7 @@
 
 struct InputData {
   bool isPressed;
+  bool isReleased;
 };
 
 enum Actions { FORWARD, BACKWARD, LEFT, RIGHT, SELECT };
@@ -16,6 +17,7 @@ class Input {
   Input(GLFWwindow* window);
   void update();
   bool isKeyPressed(Actions key);
+  bool isKeyReleased(Actions key);
   glm::vec2 getMousePosition() { return mousePosition; }
   void addKeyBinding(Actions action, int key);
 
